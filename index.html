@@ -1,0 +1,758 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>天賦能量測驗｜正式版</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Noto Sans TC",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:url("https://i.ibb.co/LMwXqHx/23-0.png") center/cover no-repeat fixed;
+      color:#111827;
+    }
+    .section{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      text-align:center;
+    }
+    button{cursor:pointer}
+
+    /* 開始頁 */
+    #startPage h1{
+      color:#c0822a;
+      font-size:clamp(28px,5vw,40px);
+      margin-bottom:12px;
+    }
+    #startPage p{
+      font-size:16px;
+      margin-bottom:20px;
+      color:#374151;
+      line-height:1.7;
+    }
+    #startPage button{
+      padding:14px 28px;
+      font-size:18px;
+      font-weight:700;
+      border:none;
+      border-radius:14px;
+      background:#6c4af2;
+      color:#fff;
+      box-shadow:0 8px 24px rgba(108,74,242,.45);
+    }
+    #startPage button:hover{filter:brightness(1.05)}
+
+    /* 題目頁 */
+    #quizPage{
+      display:none;
+      text-align:left;
+    }
+    #quizInner{
+      max-width:720px;
+      width:100%;
+      margin:0 auto;
+      padding:20px 18px;
+      border-radius:20px;
+      background:rgba(255,255,255,.9);
+      box-shadow:0 14px 40px rgba(0,0,0,.12);
+    }
+    #progress{
+      font-size:14px;
+      color:#6b7280;
+      margin-bottom:8px;
+    }
+    #questionTitle{
+      font-size:20px;
+      font-weight:700;
+      margin-bottom:14px;
+      line-height:1.6;
+    }
+    .option{
+      padding:12px 10px;
+      border-radius:10px;
+      border:1px solid #e5e7eb;
+      font-size:16px;
+      margin-top:8px;
+      background:#fff;
+      transition:.18s;
+      user-select:none;
+    }
+    .option:hover{
+      border-color:#6c4af2;
+      color:#6c4af2;
+      box-shadow:0 6px 14px rgba(108,74,242,.18);
+      transform:translateY(-1px);
+    }
+    .option.selected{
+      border-color:#6c4af2;
+      color:#6c4af2;
+      background:rgba(108,74,242,.10);
+      box-shadow:0 10px 20px rgba(108,74,242,.18);
+      transform:translateY(-1px);
+    }
+    .option.selected:hover{transform:translateY(-1px)}
+
+    #navRow{
+      margin-top:18px;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+    }
+    #navRow button{
+      flex:1;
+      padding:10px 0;
+      border-radius:10px;
+      border:none;
+      font-size:15px;
+      font-weight:600;
+    }
+    #prevBtn{
+      background:#f3f4f6;
+      color:#111827;
+    }
+    #prevBtn:disabled{
+      opacity:.4;
+      cursor:not-allowed;
+    }
+    #nextBtn{
+      background:#6c4af2;
+      color:#fff;
+      box-shadow:0 6px 18px rgba(108,74,242,.35);
+    }
+
+    /* 結果頁 */
+    #resultPage{
+      display:none;
+      text-align:left;
+    }
+    #resultInner{
+      max-width:960px;
+      width:100%;
+      margin:0 auto;
+      padding:22px 18px 26px;
+      border-radius:22px;
+      background:rgba(255,255,255,.95);
+      box-shadow:0 16px 45px rgba(0,0,0,.14);
+      display:grid;
+      gap:18px;
+    }
+    @media(min-width:900px){
+      #resultInner{grid-template-columns:1.05fr .95fr}
+    }
+    #finalTraitTitle{
+      font-size:22px;
+      font-weight:800;
+      color:#c0822a;
+      margin:0 0 8px;
+    }
+    #energyText{
+      white-space:pre-wrap;
+      font-size:15px;
+      line-height:1.7;
+      margin:6px 0 10px;
+      color:#374151;
+    }
+    #traitDesc{
+      white-space:pre-wrap;
+      font-size:15px;
+      line-height:1.8;
+      margin-top:6px;
+      color:#111827;
+    }
+    #radar{
+      max-width:420px;
+      width:100%;
+      height:auto;
+      display:block;
+      margin:0 auto;
+    }
+    #traitImg{
+      max-width:360px;
+      width:100%;
+      border-radius:18px;
+      margin:10px auto 0;
+      display:block;
+    }
+    #againBtn{
+      margin-top:14px;
+      padding:10px 16px;
+      border:none;
+      border-radius:999px;
+      background:#6c4af2;
+      color:#fff;
+      font-weight:700;
+      font-size:15px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 開始頁 -->
+  <section id="startPage" class="section">
+    <div>
+      <h1>完成 25 題<br>測出你的天賦能量 ⚡️</h1>
+      <p>用 8 大職涯特質，幫你看見最自然的賺錢方式。<br>大概 5 分鐘，就能把你的天賦地圖打開。</p>
+      <button onclick="startQuiz()">開始作答 🚀</button>
+    </div>
+  </section>
+
+  <!-- 題目頁 -->
+  <section id="quizPage" class="section">
+    <div id="quizInner">
+      <div id="progress"></div>
+      <div id="questionTitle"></div>
+      <div id="options"></div>
+      <div id="navRow">
+        <button id="prevBtn" onclick="prevQ()">⬅ 上一題</button>
+        <button id="nextBtn" onclick="nextQ()">下一題 ➜</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 結果頁 -->
+  <section id="resultPage" class="section">
+    <div id="resultInner">
+      <div>
+        <h2 id="finalTraitTitle"></h2>
+        <div id="energyText"></div>
+        <div id="traitDesc"></div>
+        <button id="againBtn" onclick="location.reload()">再測一次</button>
+      </div>
+      <div>
+        <canvas id="radar" width="420" height="420"></canvas>
+        <img id="traitImg" alt="trait image">
+      </div>
+    </div>
+  </section>
+
+<script>
+/* ========= 題目（25 題｜去相似版） ========= */
+const QUESTIONS = [
+  { q:"（1）平常做事時，你最常被怎麼形容？", a:["點子很多、想法跳很快","跟你相處很舒服","做事會先想風險","東西整理得很完整"] },
+  { q:"（2）你比較喜歡別人怎麼形容你？", a:["溫和好相處","說到做到","決定事情很快","讓人感覺有能量"] },
+  { q:"（3）哪一種情況最讓你有成就感？", a:["全局在你掌握中","腦中想法被實現","被大家肯定、看見","抓到時機順勢而為"] },
+  { q:"（4）合作時，你自然會在哪個位置？", a:["丟想法、定方向","對外溝通、串人","排時程、控進度","建流程、顧品質"] },
+  { q:"（5）在一群人裡，你通常是？", a:["想做什麼就做什麼","帶動氣氛的那個","觀察後才行動","話不多但很穩"] },
+  { q:"（6）壓力來時，你最常依靠哪一種？", a:["靠努力硬撐","靠靈感解決","靠人幫忙","靠效率流程"] },
+  { q:"（7）哪一句比較像你內心的狀態？", a:["我習慣自己想清楚","我需要有人互動","我常想太久","我受不了拖"] },
+  { q:"（8）遇到關鍵選擇時，你通常？", a:["聽聽別人經驗","看大家怎麼選","列清楚利弊","感覺對就衝"] },
+  { q:"（9）你最怕被貼上哪個標籤？", a:["看起來很混","無聊沒特色","好像沒朋友","思考很亂"] },
+  { q:"（10）哪種工作內容你比較有畫面？", a:["買低賣高、談條件","管理制度、流程","快速試錯、擴張","和人互動、合作"] },
+  { q:"（11）如果可以選，你最想避開哪種事？", a:["想新策略","分工與架構","流程與系統","一直對人"] },
+  { q:"（12）團隊裡，你常被期待做什麼？", a:["抓問題、挑毛病","提新方向","對外說話","把事做完"] },
+  { q:"（13）哪一件事最容易讓你卡關？", a:["主動經營關係","比價、算 CP","憑空想點子","挖細節錯誤"] },
+  { q:"（14）你最有自信的能力是？", a:["想出沒人想過的點","把人放在對的位置","算出最划算方案","把事情做到標準"] },
+  { q:"（15）哪種狀況你會最內耗？", a:["人際氣氛很差","沒規則、沒步驟","邏輯前後不通","一直重複"] },
+  { q:"（16）你特別受不了哪一種人？", a:["不守界線","一成不變","死不變通","做事很亂"] },
+  { q:"（17）別人最常稱讚你？", a:["很會推、很會說","很會談","看問題很準","想法很特別"] },
+  { q:"（18）哪一件事你最沒把握？", a:["把流程變更好","判斷趨勢","想新玩法","長時間互動"] },
+  { q:"（19）什麼時候你會最開心？", a:["創意被採用","認識對的人","撿到好康","系統跑得很順"] },
+  { q:"（20）哪一件事最讓你煩燥？", a:["規則被亂破","一直等沒進度","人際失溫","不知道怎麼配合"] },
+  { q:"（21）工作時，你比較像哪一型？", a:["穩穩把關","條理清楚","點子型","外放型"] },
+  { q:"（22）哪個形容你會覺得怪怪的？", a:["很穩","很有條理","很有創意","很外向"] },
+  { q:"（23）你覺得自己做什麼最不費力？", a:["和人建立連結","看出機會點","優化流程","發想新方向"] },
+  { q:"（24）快撐不住時，你會靠什麼？", a:["邏輯與判斷","天賦直覺","找人幫忙","繼續撐"] },
+  { q:"（25）事情完成後，你第一個反應是？", a:["好好慶祝一下","感謝身邊的人","收尾整理","想下一步"] },
+];
+
+const SCORE_MAP = [
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{T:+1}, B:{S:+1}, C:{D:+1}, D:{B:+1} },
+  { A:{S:+1}, B:{D:+1}, C:{B:+1}, D:{T:+1} },
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{T:+1}, B:{D:+1}, C:{B:+1}, D:{S:+1} },
+  { A:{S:+1}, B:{B:+1}, C:{T:+1}, D:{D:+1} },
+  { A:{T:+1}, B:{B:+1}, C:{S:+1}, D:{D:+1} },
+  { A:{T:+1}, B:{D:+1}, C:{B:+1}, D:{S:+1} },
+  { A:{T:+1}, B:{S:+1}, C:{D:+1}, D:{B:+1} },
+  { A:{D:-1}, B:{T:-1}, C:{S:-1}, D:{B:-1} },
+  { A:{S:+1}, B:{D:+1}, C:{B:+1}, D:{T:+1} },
+  { A:{B:-1}, B:{T:-1}, C:{D:-1}, D:{S:-1} },
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{B:+1}, B:{T:+1}, C:{S:+1}, D:{D:+1} },
+  { A:{S:+1}, B:{B:+1}, C:{D:+1}, D:{T:+1} },
+  { A:{B:+1}, B:{T:+1}, C:{S:+1}, D:{D:+1} },
+  { A:{B:+1}, B:{D:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+  { A:{S:+1}, B:{D:+1}, C:{B:+1}, D:{T:+1} },
+  { A:{S:+1}, B:{T:+1}, C:{D:+1}, D:{B:+1} },
+  { A:{S:-1}, B:{T:-1}, C:{D:-1}, D:{B:-1} },
+  { A:{B:+1}, B:{T:+1}, C:{S:+1}, D:{D:+1} },
+  { A:{S:+1}, B:{D:+1}, C:{B:+1}, D:{T:+1} },
+  { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
+];
+
+const ENERGY_DESC = {
+  D:"有創意、快、直覺派，容易活在自己的世界，沒耐心但衝很快，也有點驕傲。",
+  B:"喜歡跟人相處、舞台感強，擅長影響力、媒合與支持他人，很在意氛圍。",
+  T:"重視CP值、有自己的步驟，擅長服務、促銷與架構，把事情做成可執行的流程。",
+  S:"重視系統與邏輯，會找問題、分析資料、優化事務、做SOP，喜歡把事做好。"
+};
+
+const ARCHETYPE_RULES = [
+  { key:"D",  name:"創作者", energies:["D"] },
+  { key:"DB", name:"明星", energies:["D","B"] },
+  { key:"B",  name:"支持者", energies:["B"] },
+  { key:"BT", name:"媒合者", energies:["B","T"] },
+  { key:"T",  name:"商人", energies:["T"] },
+  { key:"TS", name:"積蓄者", energies:["T","S"] },
+  { key:"S",  name:"地主", energies:["S"] },
+  { key:"SD", name:"技師", energies:["S","D"] }
+];
+
+const TRAIT_DETAIL = {
+  "創作者":{
+    title:"🌱 創作者",
+    energyKey:"D",
+    text:
+"你是那種一想到就會想馬上動手的人。\n\n"+
+"天生優勢\n"+
+"喜歡新鮮、有趣、好玩的事，點子多、行動快，能同時跑很多任務，很快就能創造收入、開出新局。\n\n"+
+"容易卡關的地方\n"+
+"跑太快、什麼都想自己來，團隊跟不上，最後反而把自己累壞。\n\n"+
+"致富關鍵\n"+
+"👉 設計一套可以長出東西的商業模式，建立「花園」，而不是一直自己澆水。"
+  },
+  "明星":{
+    title:"✨ 明星",
+    energyKey:"B",
+    text:
+"你本人，就是亮點。\n\n"+
+"天生優勢\n"+
+"魅力強、辨識度高，適合做個人品牌，越做自己越有市場。\n\n"+
+"容易卡關的地方\n"+
+"什麼都親力親為，反而忽略「價值就在你身上」。\n\n"+
+"致富關鍵\n"+
+"👉 打造獨一無二的品牌，其他事情交給合作夥伴。"
+  },
+  "支持者":{
+    title:"🤍 支持者",
+    energyKey:"B",
+    text:
+"你是團隊裡的黏著劑。\n\n"+
+"天生優勢\n"+
+"喜歡一起做事、很會連結人，只要認同一個理念，就能全心投入。\n\n"+
+"容易卡關的地方\n"+
+"太在乎感情與人情，生活節奏容易被打亂。\n\n"+
+"致富關鍵\n"+
+"👉 選對團隊，用合作放大你的影響力。"
+  },
+  "媒合者":{
+    title:"🔗 媒合者",
+    energyKey:"T",
+    text:
+"你超會把人放在對的位置。\n\n"+
+"天生優勢\n"+
+"好相處、懂交易，能在對的時間牽起對的連結。\n\n"+
+"容易卡關的地方\n"+
+"忙著幫大家搭橋，卻忘了自己的利潤與位置。\n\n"+
+"致富關鍵\n"+
+"👉 找到你真心喜歡、也夠好的商品，品質就是你的底氣。"
+  },
+  "商人":{
+    title:"💼 商人",
+    energyKey:"T",
+    text:
+"你對「時機」特別敏感。\n\n"+
+"天生優勢\n"+
+"觀察力強、反應快，能在行動中找到機會。\n\n"+
+"容易卡關的地方\n"+
+"太專注當下，容易錯過長期價值。\n\n"+
+"致富關鍵\n"+
+"👉 掌握節奏，買低賣高，看懂循環。"
+  },
+  "積蓄者":{
+    title:"🪙 積蓄者",
+    energyKey:"S",
+    text:
+"你走得慢，但走得很穩。\n\n"+
+"天生優勢\n"+
+"謹慎可靠，擅長累積專業、人脈與會增值的資產。\n\n"+
+"容易卡關的地方\n"+
+"想準備到完美才行動，容易拖延。\n\n"+
+"致富關鍵\n"+
+"👉 買進並持有會長大的資產，時間是你的盟友。"
+  },
+  "地主":{
+    title:"🏠 地主",
+    energyKey:"S",
+    text:
+"你是掌控後端的關鍵角色。\n\n"+
+"天生優勢\n"+
+"有條理、重細節，流程一順，整個系統就活起來。\n\n"+
+"容易卡關的地方\n"+
+"不愛熱鬧社交，容易遠離前線機會。\n\n"+
+"致富關鍵\n"+
+"👉 掌握能穩定產生現金流的資產。"
+  },
+  "技師":{
+    title:"🛠️ 技師",
+    energyKey:"D",
+    text:
+"你是讓事情「變更好」的人。\n\n"+
+"天生優勢\n"+
+"能親自下場、優化流程，把混亂變成系統。\n\n"+
+"容易卡關的地方\n"+
+"誤以為自己要從 0 創造，其實你更擅長「優化」。\n\n"+
+"致富關鍵\n"+
+"👉 打造更好的系統，而不是一直重來。"
+  }
+};
+
+const ENERGY_IMAGE = {
+  B:'https://i.ibb.co/jZQjqmNg/1-0.jpg',
+  D:'https://i.ibb.co/0Ry8FxZ1/2-0.jpg',
+  T:'https://i.ibb.co/S40Nh5dw/3-0.jpg',
+  S:'https://i.ibb.co/Hfjb0rhc/4-0.jpg'
+};
+
+function applyDelta(scores, delta){
+  for(const k in delta){
+    scores[k] = (scores[k] || 0) + delta[k];
+  }
+}
+function sortEnergies(scores){
+  return Object.entries(scores)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>({key:k, score:v}));
+}
+function pickArchetype(ordered){
+  const top1 = ordered[0]?.key;
+  const top2 = ordered[1]?.key;
+  const pairKey = [top1, top2].sort().join("");
+
+  const pairHit = ARCHETYPE_RULES.find(r => r.key.split("").sort().join("") === pairKey);
+  if(pairHit) return pairHit;
+
+  const singleHit = ARCHETYPE_RULES.find(r => r.key === top1);
+  if(singleHit) return singleHit;
+
+  return { key: top1 || "D", name:"創作者", energies:[top1 || "D"] };
+}
+function analyzeTalent(answerArray){
+  if(!Array.isArray(answerArray) || answerArray.length !== 25) throw new Error("答案數量需為 25 題");
+  const scores = { D:0, B:0, T:0, S:0 };
+
+  for(let i=0;i<25;i++){
+    const v = answerArray[i];
+    if(!v) throw new Error(`第 ${i+1} 題未作答`);
+    const letter = ["A","B","C","D"][v-1];
+    applyDelta(scores, SCORE_MAP[i][letter]);
+  }
+
+  const ordered = sortEnergies(scores);
+  const main = ordered[0].key;
+  const second = ordered[1].key;
+  const archetype = pickArchetype(ordered);
+
+  const absSum = Math.abs(scores.D)+Math.abs(scores.B)+Math.abs(scores.T)+Math.abs(scores.S) || 1;
+  const percentages = {
+    D: Math.round(Math.abs(scores.D)/absSum*100),
+    B: Math.round(Math.abs(scores.B)/absSum*100),
+    T: Math.round(Math.abs(scores.T)/absSum*100),
+    S: Math.round(Math.abs(scores.S)/absSum*100),
+  };
+
+  const conclusionText =
+`你的主能量是【${main}】，次能量是【${second}】。
+你這次的天賦順流角色是【${archetype.name}】。
+
+主能量特徵：${ENERGY_DESC[main]}
+次能量加成：${ENERGY_DESC[second]}`;
+
+  return { scores, percentages, orderedEnergies: ordered, mainEnergy: main, secondEnergy: second, final_trait: archetype.name, conclusionText };
+}
+
+/* ========= 作答流程 ========= */
+let currentIndex = 0;
+const answers = new Array(25);
+
+function startQuiz(){
+  document.getElementById("startPage").style.display="none";
+  document.getElementById("quizPage").style.display="flex";
+  renderQuestion();
+}
+function renderQuestion(){
+  const q = QUESTIONS[currentIndex];
+  const total = QUESTIONS.length;
+
+  document.getElementById("progress").innerText = `第 ${currentIndex+1} / ${total} 題`;
+  document.getElementById("questionTitle").innerText = q.q;
+
+  const selected = answers[currentIndex];
+  const optsHtml = q.a.map((txt,i)=>{
+    const isSel = selected === (i+1);
+    return `<div class="option ${isSel ? 'selected' : ''}" onclick="pickOption(${i})">${String.fromCharCode(65+i)}｜${txt}</div>`;
+  }).join("");
+  document.getElementById("options").innerHTML = optsHtml;
+
+  document.getElementById("prevBtn").disabled = currentIndex===0;
+  document.getElementById("nextBtn").innerText = currentIndex === total-1 ? "看結果 ➜" : "下一題 ➜";
+}
+function pickOption(idx){
+  answers[currentIndex] = idx+1;
+  renderQuestion();
+
+  if(currentIndex === QUESTIONS.length - 1) return;
+
+  setTimeout(()=>{
+    currentIndex++;
+    renderQuestion();
+    window.scrollTo(0,0);
+  }, 120);
+}
+function prevQ(){
+  if(currentIndex>0){
+    currentIndex--;
+    renderQuestion();
+    window.scrollTo(0,0);
+  }
+}
+function nextQ(){
+  const a = answers[currentIndex];
+  if(!a){ alert("這一題還沒作答喔～"); return; }
+  if(currentIndex < QUESTIONS.length-1){
+    currentIndex++;
+    renderQuestion();
+    window.scrollTo(0,0);
+  }else{
+    showResult();
+  }
+}
+
+/* ========= 顯示結果 ========= */
+function showResult(){
+  if(answers.some(v=>!v)){
+    alert("還有題目沒作答喔～");
+    return;
+  }
+
+  const res = analyzeTalent(answers);
+  const p = res.percentages;
+  const finalName = res.final_trait;
+  const detail = TRAIT_DETAIL[finalName] || null;
+
+  document.getElementById("quizPage").style.display="none";
+  document.getElementById("resultPage").style.display="flex";
+
+  const energyText =
+    `我的天賦能量\n`+
+    `🔌 發電機 D：${p.D}%\n`+
+    `🔥 火焰 B：${p.B}%\n`+
+    `🥁 節奏 T：${p.T}%\n`+
+    `🛠 鋼鐵 S：${p.S}%\n\n`+
+    `${res.conclusionText}`;
+
+  document.getElementById("energyText").textContent = energyText;
+
+  if(detail){
+    document.getElementById("finalTraitTitle").textContent = detail.title;
+    document.getElementById("traitDesc").textContent = detail.text;
+    const imgKey = detail.energyKey || res.mainEnergy;
+    document.getElementById("traitImg").src = ENERGY_IMAGE[imgKey] || "";
+  }else{
+    document.getElementById("finalTraitTitle").textContent = finalName;
+    document.getElementById("traitDesc").textContent = "";
+    document.getElementById("traitImg").src = ENERGY_IMAGE[res.mainEnergy] || "";
+  }
+
+  drawRadar(p);
+}
+
+/* ========= 雷達圖：八邊形＋最外框正方形（你要的） ========= */
+let radarBg = null;
+(function preloadBg(){
+  radarBg = new Image();
+  radarBg.crossOrigin = "anonymous";
+  radarBg.src = "https://i.ibb.co/8gPc8txW/result-bg.png";
+})();
+function drawRadar(type8){
+  const c = document.getElementById("radar");
+  const ctx = c.getContext("2d");
+  const W = c.width, H = c.height;
+  const cx = W/2, cy = H/2;
+
+  ctx.clearRect(0,0,W,H);
+
+  // 背景
+  if (radarBg && radarBg.complete) {
+    ctx.drawImage(radarBg, 0, 0, W, H);
+  } else {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0,0,W,H);
+    if (radarBg) radarBg.onload = ()=>drawRadar(type8);
+  }
+
+  // 版面：外框正方形
+  const pad = 34;
+  const half = Math.min(W,H)/2 - pad;
+  const left = cx - half, right = cx + half;
+  const top  = cy - half, bottom = cy + half;
+
+  // 八邊形半徑（塞進正方形）
+  const r = half / 0.9238795325; // cos(22.5°)
+
+  const drawSquare = (h)=>{
+    ctx.beginPath();
+    ctx.moveTo(cx - h, cy - h);
+    ctx.lineTo(cx + h, cy - h);
+    ctx.lineTo(cx + h, cy + h);
+    ctx.lineTo(cx - h, cy + h);
+    ctx.closePath();
+    ctx.stroke();
+  };
+
+  const drawOct = (rr)=>{
+    ctx.beginPath();
+    for(let i=0;i<8;i++){
+      const ang = (-90 + i*45) * Math.PI/180;
+      const x = cx + rr*Math.cos(ang);
+      const y = cy + rr*Math.sin(ang);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  };
+
+  // 1) 外框正方形
+  ctx.strokeStyle = "#cfcfcf";
+  ctx.lineWidth = 2;
+  drawSquare(half);
+
+  // 2) 四角→中心 虛線
+  ctx.save();
+  ctx.setLineDash([4,6]);
+  ctx.strokeStyle = "#d9d9d9";
+  ctx.lineWidth = 1.5;
+  const corners = [[left,top],[right,top],[right,bottom],[left,bottom]];
+  for(const [x,y] of corners){
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(cx,cy);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // 3) 十字虛線
+  ctx.save();
+  ctx.setLineDash([3,6]);
+  ctx.strokeStyle = "#d9d9d9";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, top);    ctx.lineTo(cx, bottom);
+  ctx.moveTo(left, cy);   ctx.lineTo(right, cy);
+  ctx.stroke();
+  ctx.restore();
+
+  // 4) 八邊形格線
+  ctx.strokeStyle = "#d0d0d0";
+  ctx.lineWidth = 2;
+  drawOct(r*0.35);
+  drawOct(r*0.70);
+  drawOct(r);
+
+  // 5) 八條放射線
+  ctx.beginPath();
+  for(let i=0;i<8;i++){
+    const ang = (-90 + i*45) * Math.PI/180;
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx + r*Math.cos(ang), cy + r*Math.sin(ang));
+  }
+  ctx.strokeStyle = "#e0e0e0";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 6) 外圈黃點＋標籤（跟你示意圖位置）
+  const labels = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
+  const dotOffset = 22;
+
+  const dots = [
+    {x:left - dotOffset,  y:top - dotOffset},     // 技師
+    {x:cx,                y:top - dotOffset},     // 創作者
+    {x:right + dotOffset, y:top - dotOffset},     // 明星
+    {x:right + dotOffset, y:cy},                  // 支持者
+    {x:right + dotOffset, y:bottom + dotOffset},  // 媒合者
+    {x:cx,                y:bottom + dotOffset},  // 商人
+    {x:left - dotOffset,  y:bottom + dotOffset},  // 積蓄者
+    {x:left - dotOffset,  y:cy},                  // 地主
+  ];
+
+  const textPos = [
+    {x:left - dotOffset - 36,  y:top - dotOffset - 6},
+    {x:cx,                     y:top - dotOffset - 18},
+    {x:right + dotOffset + 36, y:top - dotOffset - 6},
+    {x:right + dotOffset + 44, y:cy},
+    {x:right + dotOffset + 44, y:bottom + dotOffset + 6},
+    {x:cx,                     y:bottom + dotOffset + 18},
+    {x:left - dotOffset - 44,  y:bottom + dotOffset + 6},
+    {x:left - dotOffset - 44,  y:cy},
+  ];
+
+  for(const d of dots){
+    ctx.beginPath();
+    ctx.fillStyle = "#f2c94c";
+    ctx.arc(d.x, d.y, 7, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "#666";
+  ctx.font = "600 16px 'Noto Sans TC'";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  for(let i=0;i<labels.length;i++){
+    ctx.fillText(labels[i], textPos[i].x, textPos[i].y);
+  }
+
+  // ✅ 7) 真正 8 類型各自分數（不再用平均值）
+  // 軸順序要跟 labels 對齊：技師→創作者→明星→支持者→媒合者→商人→積蓄者→地主
+  const values = [
+    type8["技師"] ?? 0,
+    type8["創作者"] ?? 0,
+    type8["明星"] ?? 0,
+    type8["支持者"] ?? 0,
+    type8["媒合者"] ?? 0,
+    type8["商人"] ?? 0,
+    type8["積蓄者"] ?? 0,
+    type8["地主"] ?? 0,
+  ];
+
+  const clamp01 = x => Math.max(0, Math.min(1, (x||0)/100));
+  const pts = [];
+
+  for(let i=0;i<8;i++){
+    const f = clamp01(values[i]);
+    const ang = (-135 + i*45) * Math.PI/180; // 讓「技師」落在左上角，跟示意圖一致
+    pts.push({ x: cx + r*f*Math.cos(ang), y: cy + r*f*Math.sin(ang) });
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.closePath();
+
+  ctx.fillStyle = "rgba(37,99,235,0.08)";
+  ctx.strokeStyle = "#2563eb";
+  ctx.lineWidth = 3;
+  ctx.fill();
+  ctx.stroke();
+
+  // 版本字
+  ctx.fillStyle = "#ef4444";
+  ctx.font = "700 12px 'Noto Sans TC'";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText("v2025-12-19-8types", 12, 18);
+}
+</script>
+</body>
+</html> 
