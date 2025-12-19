@@ -9,7 +9,6 @@
   <style>
     *{box-sizing:border-box}
 
-    /* ✅ 背景圖放到 html，讓 body::before 淡化遮罩能蓋在背景上 */
     html{
       height:100%;
       background:url("https://i.ibb.co/FbVWf5RN/2025-12-19-20-46-29.png") center/cover no-repeat fixed;
@@ -24,7 +23,6 @@
       position:relative;
     }
 
-    /* ✅ 背景淡化遮罩（數字越大越淡） */
     body::before{
       content:"";
       position:fixed;
@@ -59,7 +57,7 @@
       line-height:1.7;
     }
 
-    /* ✅ 開始作答按鈕：更深駝色 */
+    /* 開始作答按鈕 */
     #startPage button{
       padding:14px 28px;
       font-size:18px;
@@ -74,70 +72,63 @@
 
     /* 題目頁 */
     #quizPage{display:none;text-align:left;}
-#quizInner{
-  max-width:720px;
-  width:100%;
-  margin:0 auto;
-  padding:20px 18px;
-  border-radius:22px;
-  position:relative;
-  overflow:hidden;
+    #quizInner{
+      max-width:720px;
+      width:100%;
+      margin:0 auto;
+      padding:20px 18px;
+      border-radius:22px;
+      position:relative;
+      overflow:hidden;
 
-  /* 亮玻璃底 */
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.60) 0%,
-    rgba(255,255,255,.30) 55%,
-    rgba(108,74,242,.10) 100%
-  );
+      background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.60) 0%,
+        rgba(255,255,255,.30) 55%,
+        rgba(108,74,242,.10) 100%
+      );
 
-  backdrop-filter: blur(14px) saturate(1.3);
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
 
-  border:1.5px solid rgba(255,255,255,.65);
+      border:1.5px solid rgba(255,255,255,.65);
 
-  box-shadow:
-    0 20px 56px rgba(17,24,39,.14),
-    inset 0 0 0 1px rgba(255,255,255,.45);
-}
-
+      box-shadow:
+        0 20px 56px rgba(17,24,39,.14),
+        inset 0 0 0 1px rgba(255,255,255,.45);
+    }
 
     #progress{font-size:14px;color:#6b7280;margin-bottom:8px;}
     #questionTitle{font-size:20px;font-weight:800;margin-bottom:14px;line-height:1.6;color:#111827;}
 
-/* ✅ 選項：拿掉白色底（透明） */
-.option{
-  padding:12px 10px;
-  border-radius:12px;
-  border:1px solid rgba(17,24,39,.18);
-  font-size:16px;
-  margin-top:10px;
-  background:transparent;              /* ✅ 沒有白色匡 */
-  color:#111827;
-  transition:.18s;
-  user-select:none;
-  backdrop-filter:none;
-}
+    .option{
+      padding:12px 10px;
+      border-radius:12px;
+      border:1px solid rgba(17,24,39,.18);
+      font-size:16px;
+      margin-top:10px;
+      background:transparent;
+      color:#111827;
+      transition:.18s;
+      user-select:none;
+      backdrop-filter:none;
+    }
 
-/* ✅ hover 也改成咖啡色系（更一致） */
-.option:hover{
-  border-color:#A56A2A;
-  color:#7A4A1E;
-  box-shadow:0 10px 24px rgba(165,106,42,.18);
-  transform:translateY(-1px);
-  background:rgba(165,106,42,.08);
-}
+    .option:hover{
+      border-color:#A56A2A;
+      color:#7A4A1E;
+      box-shadow:0 10px 24px rgba(165,106,42,.18);
+      transform:translateY(-1px);
+      background:rgba(165,106,42,.08);
+    }
 
-
-/* ✅ 選到的選項：淡咖啡色（取代紫色） */
-.option.selected{
-  border-color:#A56A2A;                 /* 淡咖啡駝色 */
-  color:#7A4A1E;                        /* 深一點的咖啡字色 */
-  background:rgba(165,106,42,.14);      /* 很淡的咖啡底 */
-  box-shadow:0 14px 30px rgba(165,106,42,.22);
-  transform:translateY(-1px);
-}
-
+    .option.selected{
+      border-color:#A56A2A;
+      color:#7A4A1E;
+      background:rgba(165,106,42,.14);
+      box-shadow:0 14px 30px rgba(165,106,42,.22);
+      transform:translateY(-1px);
+    }
 
     #navRow{
       margin-top:18px;
@@ -155,63 +146,73 @@
     }
     #prevBtn{background:#f3f4f6;color:#111827;}
     #prevBtn:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* ✅ 駝色淡一點 */
+    :root{
+      --camel:#B07A3A;
+      --camelText:#ffffff;
+      --camelShadow: rgba(176,122,58,.30);
+    }
     #nextBtn{
-      background:#A56A2A;
-      color:#fff;
-      box-shadow:0 6px 18px rgba(108,74,242,.35);
+      background:var(--camel);
+      color:var(--camelText);
+      box-shadow:0 6px 18px var(--camelShadow);
     }
 
     /* 結果頁 */
     #resultPage{display:none;text-align:left;}
+    #resultInner{
+      max-width:980px;
+      width:100%;
+      margin:0 auto;
+      padding:22px 18px 26px;
+      border-radius:22px;
+      position:relative;
+      overflow:hidden;
 
-#resultInner{
-  max-width:980px;
-  width:100%;
-  margin:0 auto;
-  padding:22px 18px 26px;
-  border-radius:22px;
-  position:relative;
-  overflow:hidden;
+      background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.58) 0%,
+        rgba(255,255,255,.28) 55%,
+        rgba(108,74,242,.08) 100%
+      );
 
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.58) 0%,
-    rgba(255,255,255,.28) 55%,
-    rgba(108,74,242,.08) 100%
-  );
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
 
-  backdrop-filter: blur(14px) saturate(1.3);
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      border:1.5px solid rgba(255,255,255,.62);
 
-  border:1.5px solid rgba(255,255,255,.62);
+      box-shadow:
+        0 22px 60px rgba(17,24,39,.16),
+        inset 0 0 0 1px rgba(255,255,255,.42);
 
-  box-shadow:
-    0 22px 60px rgba(17,24,39,.16),
-    inset 0 0 0 1px rgba(255,255,255,.42);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
 
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-    /* ① 第一行：能量同一行 */
+    /* ✅ 我的天賦能量：標題一行＋比例下一行（標題字更大） */
     #energyLine{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      color:#111827;
+    }
+    #energyLine .label{
+      font-weight:900;
+      font-size:18px;           /* ✅ 稍微大一點 */
+      letter-spacing:.2px;
+    }
+    #energyLine .energyVals{
       display:flex;
       flex-wrap:wrap;
       gap:10px 14px;
       align-items:center;
       font-size:15px;
-      line-height:1.6;
-      color:#111827;
       font-weight:800;
-    }
-    #energyLine .label{
       color:#111827;
-      font-weight:900;
-      margin-right:2px;
     }
 
-    /* ② 雷達圖 + 解析圖 */
     #vizRow{
       display:grid;
       gap:12px;
@@ -229,7 +230,6 @@
       margin:0 auto;
     }
 
-    /* ✅ 解析圖：只顯示最高比例（並列顯示兩張） */
     #traitImgs{
       width:100%;
       max-width:420px;
@@ -249,7 +249,6 @@
       object-fit:cover;
     }
 
-    /* ③ 主能量/角色小段 */
     #summaryLine{
       white-space:pre-wrap;
       font-size:15px;
@@ -259,7 +258,6 @@
       font-weight:800;
     }
 
-    /* ④ 解析內容：白色卡片拿掉，改成直接排版 */
     #finalTraitTitle{
       font-size:22px;
       font-weight:900;
@@ -273,7 +271,6 @@
       font-weight:400;
     }
 
-    /* ✅ 原本 traitCard 是白色卡，現在改成透明容器 */
     #traitCard{
       border:none;
       border-radius:0;
@@ -296,25 +293,25 @@
       font-weight:400;
     }
 
+    /* ✅ 再測一次：駝色淡一點 */
     #againBtn{
       margin-top:6px;
       padding:10px 16px;
       border:none;
       border-radius:999px;
-      background:#A56A2A;
-      color:#fff;
+      background:var(--camel);
+      color:var(--camelText);
       font-weight:900;
       font-size:15px;
       cursor:pointer;
       align-self:flex-start;
-      box-shadow:0 10px 24px rgba(108,74,242,.28);
+      box-shadow:0 10px 24px var(--camelShadow);
     }
   </style>
 </head>
 
 <body>
 
-  <!-- 開始頁 -->
   <section id="startPage" class="section">
     <div>
       <h1>完成 25 題<br>測出你的天賦能量</h1>
@@ -323,7 +320,6 @@
     </div>
   </section>
 
-  <!-- 題目頁 -->
   <section id="quizPage" class="section">
     <div id="quizInner">
       <div id="progress"></div>
@@ -336,7 +332,6 @@
     </div>
   </section>
 
-  <!-- 結果頁 -->
   <section id="resultPage" class="section">
     <div id="resultInner">
 
@@ -430,14 +425,8 @@ function applyDelta(scores, delta){
   for(const k in delta) scores[k] = (scores[k] || 0) + delta[k];
 }
 
-/* ✅ 百分比：把 raw 轉成權重→0~100 */
 function toPercentagesFromRaw(raw){
-  const w = {
-    D: Math.abs(raw.D || 0),
-    B: Math.abs(raw.B || 0),
-    T: Math.abs(raw.T || 0),
-    S: Math.abs(raw.S || 0),
-  };
+  const w = { D: Math.abs(raw.D||0), B: Math.abs(raw.B||0), T: Math.abs(raw.T||0), S: Math.abs(raw.S||0) };
   let sum = w.D + w.B + w.T + w.S;
   if(!sum) return { D:25, B:25, T:25, S:25 };
 
@@ -451,18 +440,14 @@ function toPercentagesFromRaw(raw){
   const total = p.D + p.B + p.T + p.S;
   const diff = 100 - total;
   if(diff !== 0){
-    let best = "D";
-    let bestV = w.D;
-    for(const k of ["B","T","S"]){
-      if(w[k] > bestV){ bestV = w[k]; best = k; }
-    }
+    let best = "D", bestV = w.D;
+    for(const k of ["B","T","S"]){ if(w[k] > bestV){ bestV=w[k]; best=k; } }
     p[best] += diff;
   }
   for(const k of ["D","B","T","S"]) p[k] = Math.max(0, Math.min(100, p[k]));
   return p;
 }
 
-/* ✅ 八角色（雙能量＝平均） */
 function mapDBTS_to_8types(percentages){
   const { D, B, T, S } = percentages;
   const avg = (a,b)=>Math.round((a+b)/2);
@@ -480,8 +465,7 @@ function mapDBTS_to_8types(percentages){
 
 const ROLE_ORDER_8 = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
 function pickRoleBy8Types(type8){
-  let best = ROLE_ORDER_8[0];
-  let bestV = type8[best] ?? -Infinity;
+  let best = ROLE_ORDER_8[0], bestV = type8[best] ?? -Infinity;
   for(const k of ROLE_ORDER_8){
     const v = type8[k] ?? -Infinity;
     if(v > bestV){ bestV = v; best = k; }
@@ -490,10 +474,9 @@ function pickRoleBy8Types(type8){
 }
 
 function pickMainEnergy(percentages){
-  let best = "D";
-  let bestV = percentages.D;
+  let best="D", bestV=percentages.D;
   for(const k of ["B","T","S"]){
-    if(percentages[k] > bestV){ bestV = percentages[k]; best = k; }
+    if(percentages[k] > bestV){ bestV=percentages[k]; best=k; }
   }
   return best;
 }
@@ -622,7 +605,6 @@ function resizeCanvasToDisplaySize(canvas){
   return { size, dpr };
 }
 
-/* ========= 雷達圖（第一層 30%，第二層 70%） ========= */
 function drawRadar(type8){
   const c = $("radar");
   const ctx = c.getContext("2d");
@@ -785,11 +767,13 @@ function showResult(){
   $("resultPage").style.display="flex";
 
   $("energyLine").innerHTML =
-    `<span class="label">我的天賦能量</span>`+
-    ` <span>⚡️發電機 D：${p.D}%</span>`+
-    ` <span>🔥 火焰 B：${p.B}%</span>`+
-    ` <span>⏰ 節奏 T：${p.T}%</span>`+
-    ` <span>🛠 鋼鐵 S：${p.S}%</span>`;
+    `<div class="label">我的天賦能量</div>` +
+    `<div class="energyVals">` +
+      `<span>⚡️ 發電機 D：${p.D}%</span>` +
+      `<span>🔥 火焰 B：${p.B}%</span>` +
+      `<span>⏰ 節奏 T：${p.T}%</span>` +
+      `<span>🛠 鋼鐵 S：${p.S}%</span>` +
+    `</div>`;
 
   drawRadar(type8);
 
@@ -800,7 +784,6 @@ function showResult(){
   wrap.innerHTML = topKeys.map(k => `<img src="${ENERGY_IMAGE[k] || ""}" alt="${k}">`).join("");
 
   const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ? "節奏" : "鋼鐵";
-  const roleScore = (type8?.[role] ?? 0);
 
   $("summaryLine").textContent =
     `你的主能量是【${mainName}】\n`+
@@ -814,7 +797,6 @@ function showResult(){
   $("wealthText").textContent = block.wealth || "";
 }
 
-/* ========= 初始化 ========= */
 window.addEventListener("DOMContentLoaded", ()=>{
   $("startBtn").addEventListener("click", startQuiz);
   $("prevBtn").addEventListener("click", prevQ);
@@ -824,5 +806,6 @@ window.addEventListener("DOMContentLoaded", ()=>{
 </script>
 </body>
 </html>
+
 
 
