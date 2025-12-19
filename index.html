@@ -783,7 +783,7 @@ function showResult(){
   wrap.className = topKeys.length === 1 ? "one" : "two";
   wrap.innerHTML = topKeys.map(k => `<img src="${ENERGY_IMAGE[k] || ""}" alt="${k}">`).join("");
 
-  const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ? "節奏" : "鋼鐵";
+  const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ?  "節奏" : "鋼鐵";
 
   $("summaryLine").textContent =
     `你的主能量是【${mainName}】\n`+
