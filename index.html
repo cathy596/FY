@@ -9,6 +9,15 @@
   <style>
     *{box-sizing:border-box}
 
+    :root{
+      --camel:#B07A3A;
+      --camelText:#ffffff;
+      --camelShadow: rgba(176,122,58,.30);
+      --contentW: 980px;
+      --darkRed:#7A1F1F;
+
+    }
+
     html{
       height:100%;
       background:url("https://i.ibb.co/FbVWf5RN/2025-12-19-20-46-29.png") center/cover no-repeat fixed;
@@ -44,6 +53,12 @@
     }
     button{cursor:pointer}
 
+    .blockW{
+      width:100%;
+      max-width:var(--contentW);
+      margin:0 auto;
+    }
+
     /* 開始頁 */
     #startPage h1{
       color:#c0822a;
@@ -56,8 +71,6 @@
       color:#374151;
       line-height:1.7;
     }
-
-    /* 開始作答按鈕 */
     #startPage button{
       padding:14px 28px;
       font-size:18px;
@@ -111,9 +124,7 @@
       color:#111827;
       transition:.18s;
       user-select:none;
-      backdrop-filter:none;
     }
-
     .option:hover{
       border-color:#A56A2A;
       color:#7A4A1E;
@@ -121,7 +132,6 @@
       transform:translateY(-1px);
       background:rgba(165,106,42,.08);
     }
-
     .option.selected{
       border-color:#A56A2A;
       color:#7A4A1E;
@@ -146,12 +156,6 @@
     }
     #prevBtn{background:#f3f4f6;color:#111827;}
     #prevBtn:disabled{opacity:.4;cursor:not-allowed;}
-
-    :root{
-      --camel:#B07A3A;
-      --camelText:#ffffff;
-      --camelShadow: rgba(176,122,58,.30);
-    }
     #nextBtn{
       background:var(--camel);
       color:var(--camelText);
@@ -161,7 +165,7 @@
     /* 結果頁 */
     #resultPage{display:none;text-align:left;}
     #resultInner{
-      max-width:980px;
+      max-width:var(--contentW);
       width:100%;
       margin:0 auto;
       padding:22px 18px 20px;
@@ -190,7 +194,7 @@
       gap:14px;
     }
 
-    /* ✅ 文字區加框框 */
+    /* ✅ 1) 文字卡：我的天賦能量 + 文字解析 */
     #textBox{
       border-radius:18px;
       padding:16px 14px;
@@ -200,25 +204,11 @@
       text-align:left;
     }
 
-    #energyLine{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      color:#111827;
-    }
-    #energyLine .label{
+    #energyTitle{
       font-weight:900;
-      font-size:18px;
+      font-size:20px;
       letter-spacing:.2px;
-    }
-    /* ✅ 發電機/節奏那行不要粗體 */
-    #energyLine .energyVals{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px 14px;
-      align-items:center;
-      font-size:15px;
-      font-weight:500;
+      margin:0 0 10px;
       color:#111827;
     }
 
@@ -227,7 +217,7 @@
       font-size:15px;
       line-height:1.7;
       color:#374151;
-      margin-top:6px;
+      margin:0 0 10px;
       font-weight:700;
     }
 
@@ -247,21 +237,13 @@
       white-space:pre-wrap;
     }
 
-    #traitCard{
-      border:none;
-      border-radius:0;
-      padding:0;
-      background:transparent;
-    }
-
     .kTitle{
       color:#7A1F1F;
       font-weight:800;
-      margin:10px 0 6px;
+      margin:0 0 6px;
       font-size:14px;
       letter-spacing:.5px;
     }
-
     .kBody{
       white-space:pre-wrap;
       font-size:15px;
@@ -271,18 +253,91 @@
       font-weight:400;
     }
 
-    /* ✅ 圖片區永遠上下（雷達在上、圖片在下） */
+    #kGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px 16px;
+      margin-top:10px;
+    }
+    .kItem{
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(17,24,39,.08);
+      border-radius: 16px;
+      padding: 12px 12px;
+      box-shadow: 0 8px 18px rgba(17,24,39,.05);
+    }
+    @media (max-width: 760px){
+      #kGrid{ grid-template-columns: 1fr; }
+    }
+
+    /* ✅ 2) 百分比小表格（置中、像你截圖那種） */
+    #energyCard{
+      border-radius:18px;
+      padding:12px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(17,24,39,.10);
+      box-shadow:0 10px 26px rgba(17,24,39,.06);
+    }
+ #energyTable{
+  width:100%;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:0;
+  border-radius:12px;
+  overflow:hidden;
+
+  /* ✅ 整條不要白：改成半透明灰、帶一點玻璃感 */
+  background:rgba(17,24,39,.10);
+  border:1px solid rgba(17,24,39,.10);
+}
+
+.eCell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:10px 8px;
+
+  /* ✅ 每格也不要白 */
+  background:rgba(255,255,255,.35);
+
+  border-right:1px solid rgba(0,0,0,.10);
+  font-weight:800;
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+}
+.eCell:last-child{ border-right:none; }
+
+.eLabel{
+  color:#111827;
+  font-weight:800;
+}
+
+/* ✅ % 數字暗紅 */
+.eVal{
+  color:var(--darkRed);
+  font-weight:900;
+}
+
+
+    @media(max-width:640px){
+      #energyTable{ grid-template-columns: repeat(2, 1fr); }
+      .eCell:nth-child(2){ border-right:none; }
+      .eCell:nth-child(4){ border-right:none; }
+    }
+
+    /* ✅ 3) 雷達圖 → 圖片 */
     #vizRow{
       display:flex;
       flex-direction:column;
       gap:12px;
-      align-items:center;
+      align-items:stretch;
       margin-top:2px;
     }
 
     #radar{
       width:100%;
-      max-width:520px;
+      max-width:var(--contentW);
       aspect-ratio:1/1;
       height:auto;
       display:block;
@@ -291,30 +346,29 @@
 
     #traitImgs{
       width:100%;
-      max-width:520px;
+      max-width:var(--contentW);
       margin:0 auto;
       display:grid;
       gap:10px;
-      justify-items:center;
-      align-items:center;
+      justify-items:stretch;
+      align-items:stretch;
     }
-    #traitImgs.one img{ width:min(520px, 100%); }
-
-    #traitImgs.one{grid-template-columns:1fr;}
-    #traitImgs.two{grid-template-columns:1fr 1fr;}
+    #traitImgs.one{ grid-template-columns:1fr; }
+    #traitImgs.two{ grid-template-columns:1fr 1fr; }
     @media(max-width:520px){
-      #traitImgs.two{grid-template-columns:1fr;}
+      #traitImgs.two{ grid-template-columns:1fr; }
     }
-
     #traitImgs img{
       width:100%;
-      border-radius:18px;
+      height:auto;
       display:block;
-      object-fit:cover;
-      max-height:320px;
+      object-fit:contain;
+      border-radius:18px;
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(17,24,39,.06);
     }
 
-    /* ✅ 底部按鈕置中 + 新增下載按鈕 */
+    /* 底部按鈕 */
     #btnRow{
       margin-top:6px;
       display:flex;
@@ -332,10 +386,7 @@
       box-shadow:0 10px 24px var(--camelShadow);
       min-width:150px;
     }
-    #againBtn{
-      background:var(--camel);
-      color:var(--camelText);
-    }
+    #againBtn{ background:var(--camel); color:var(--camelText); }
     #downloadBtn{
       background:#111827;
       color:#fff;
@@ -343,7 +394,7 @@
     }
     #downloadBtn[disabled]{opacity:.65;cursor:not-allowed;}
 
-    /* ✅ 下載用 IG 分享卡外框留白（只在下載時用，平常藏起來） */
+    /* 下載用分享舞台 */
     #shareStage{
       position:fixed;
       left:-99999px;
@@ -360,7 +411,6 @@
       box-shadow:0 30px 70px rgba(17,24,39,.12);
     }
     #shareCard #traitImgs img{ max-height:360px; }
-
     #shareFooter{
       margin-top:14px;
       font-size:14px;
@@ -368,6 +418,11 @@
       text-align:center;
       font-weight:600;
     }
+    .mainEnergy{
+  color:#7A1F1F;/* 紅色 */
+  font-weight:900;
+}
+
   </style>
 </head>
 
@@ -377,7 +432,7 @@
     <div>
       <h1>完成 25 題<br>測出你的天賦能量</h1>
       <p>用 8 大職涯特質，看見最適合你的賺錢方式<br>5 分鐘，就能把你的天賦地圖打開。</p>
-      <button id="startBtn">開始作答</button>
+      <button id="startBtn" type="button">開始作答</button>
     </div>
   </section>
 
@@ -387,8 +442,8 @@
       <div id="questionTitle"></div>
       <div id="options"></div>
       <div id="navRow">
-        <button id="prevBtn">⬅ 上一題</button>
-        <button id="nextBtn">下一題 ➜</button>
+        <button id="prevBtn" type="button">⬅ 上一題</button>
+        <button id="nextBtn" type="button">下一題 ➜</button>
       </div>
     </div>
   </section>
@@ -396,33 +451,49 @@
   <section id="resultPage" class="section">
     <div id="resultInner">
 
-      <div id="textBox">
-        <div id="energyLine"></div>
+      <!-- ✅ 1) 文字卡：我的天賦能量 + 文字解析 -->
+      <div id="textBox" class="blockW">
+        <div id="energyTitle">我的天賦能量</div>
+
         <div id="summaryLine"></div>
 
-        <div id="traitCard">
-          <div id="finalTraitTitle"></div>
-          <div id="traitOneLine"></div>
+        <div id="finalTraitTitle"></div>
+        <div id="traitOneLine"></div>
 
-          <div class="kTitle">【你很強的地方】</div>
-          <p class="kBody" id="advText"></p>
-
-          <div class="kTitle">【容易卡住的地方】</div>
-          <p class="kBody" id="blindText"></p>
-
-          <div class="kTitle">【順流策略】</div>
-          <p class="kBody" id="wealthText"></p>
+        <div id="kGrid">
+          <div class="kItem">
+            <div class="kTitle">【你的優勢】</div>
+            <p class="kBody" id="advText"></p>
+          </div>
+          <div class="kItem">
+            <div class="kTitle">【你的卡點】</div>
+            <p class="kBody" id="blindText"></p>
+          </div>
+          <div class="kItem">
+            <div class="kTitle">【順流方向】</div>
+            <p class="kBody" id="wealthText"></p>
+          </div>
+          <div class="kItem">
+            <div class="kTitle">【適合合作對象】</div>
+            <p class="kBody" id="partnerText"></p>
+          </div>
         </div>
       </div>
 
-      <div id="vizRow">
+      <!-- ✅ 2) 百分比小表格 -->
+      <div id="energyCard" class="blockW">
+        <div id="energyTable" aria-label="能量百分比表格"></div>
+      </div>
+
+      <!-- ✅ 3) 雷達圖 → 圖片 -->
+      <div id="vizRow" class="blockW">
         <canvas id="radar"></canvas>
         <div id="traitImgs"></div>
       </div>
 
-      <div id="btnRow">
-        <button id="againBtn" class="pillBtn">再測一次</button>
-        <button id="downloadBtn" class="pillBtn">下載結果圖</button>
+      <div id="btnRow" class="blockW">
+        <button id="againBtn" class="pillBtn" type="button">再測一次</button>
+        <button id="downloadBtn" class="pillBtn" type="button">下載結果圖</button>
       </div>
 
     </div>
@@ -435,7 +506,7 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
-/* ========= 題目（25 題｜完整版敘述） ========= */
+/* ========= 題目（25 題） ========= */
 const QUESTIONS = [
   { q:"1. 平常做事時，身邊的人最常怎麼形容你？", a:["想法很多、點子一直冒出來，腦袋轉很快","跟你相處很舒服，會自然想跟你合作","做事前一定會先想風險，不太會亂衝","東西整理得很完整，細節不太會出錯"]},
   { q:"2. 你「比較希望」別人怎麼看你？", a:["個性溫和、好相處，大家都願意找你","說到做到、交辦的事可以放心交給你","做決定很快，關鍵時刻能拍板","跟你在一起會覺得有能量、有帶動感"]},
@@ -464,7 +535,7 @@ const QUESTIONS = [
   { q:"25. 事情完成後，你第一個反應是？", a:["好好慶祝一下","感謝身邊幫忙的人","把收尾、整理做好","開始想下一步要幹嘛"]},
 ];
 
-/* ========= DBTS 計分（沿用） ========= */
+/* ========= DBTS 計分 ========= */
 const SCORE_MAP = [
   { A:{D:+1}, B:{B:+1}, C:{T:+1}, D:{S:+1} },
   { A:{T:+1}, B:{S:+1}, C:{D:+1}, D:{B:+1} },
@@ -560,71 +631,79 @@ const ENERGY_IMAGE = {
   S:'https://i.ibb.co/WWkXCyg6/4-0.png'
 };
 
-/* ✅ 雷達面積顏色：跟著最高能量走 */
 const RADAR_THEME = {
-  D: { stroke:"#16a34a", fill:"rgba(22,163,74,0.12)" },   // 發電機：綠
-  B: { stroke:"#dc2626", fill:"rgba(220,38,38,0.12)" },   // 火焰：紅
-  T: { stroke:"#f59e0b", fill:"rgba(245,158,11,0.14)" },  // 節奏：黃（填色略深一點點）
-  S: { stroke:"#6b7280", fill:"rgba(107,114,128,0.14)" }, // 鋼鐵：鐵灰
+  D: { stroke:"#16a34a", fill:"rgba(22,163,74,0.12)" },
+  B: { stroke:"#dc2626", fill:"rgba(220,38,38,0.12)" },
+  T: { stroke:"#f59e0b", fill:"rgba(245,158,11,0.14)" },
+  S: { stroke:"#6b7280", fill:"rgba(107,114,128,0.14)" },
 };
 
-/* ✅ 各特質解析 */
+/* ✅ 解析文案（你原本那段我完整補回來了） */
 const TRAIT_BLOCKS = {
   "創作者": {
-    title:"🌱 創作者 Creator｜從 0 到 1 的靈感引擎",
-    oneLine:"代表人物：查理・布蘭森｜「世界還沒準備好，但你已經看見未來。」",
-    adv:`• 點子源源不絕、直覺超準\n• 有遠見、敢冒險、樂觀\n• 超會「開始」，不怕從零出發`,
-    blind:`• 沒耐心、時機感較弱\n• 想法太多，反而難完成\n• 一個人硬撐會很孤單`,
-    wealth:`• 只做「創造」：策略、產品、創意\n• 找對搭檔：支持者＋積蓄者\n• 工具外包大腦，專注靈感\n• 一定要「動手做」，不要只想\n✨ 你不是不夠努力，只是不該一個人把全部做完。`
+    title:"創作者 ｜從 0 到 1 的靈感發想",
+    oneLine:"代表人物：查理・布蘭森｜「世界還沒準備好，但你已經看見未來」",
+    adv:`• 點子源源不絕、直覺超準\n• 有遠見、敢冒險、樂觀\n• 敢於開頭，不怕從零出發`,
+    blind:`• 沒耐心、時機感較弱\n• 想法太多，反而很難完成\n• 一個人硬撐會很孤單`,
+    wealth:`• 只做發想，例如：策略、產品、創意\n• 找對搭檔：支持者＋積蓄者\n• 工具外包大腦，專注靈感\n• 一定要動手做，不要只是想\n✨ 你不是不夠努力，只是不該一個人把全部做完。`,
+    partner:`最合拍：支持者、積蓄者\n原因：有人幫你落地＋有人幫你守節奏\n提醒：別找另一個創作者一起飛，容易一起發散`
   },
   "明星": {
-    title:"⭐ 明星 Star｜用影響力打造品牌",
-    oneLine:"代表人物：歐普拉・溫芙蕾｜「你站在那裡，本身就是價值。」",
-    adv:`• 天生吸睛、會說故事\n• 溝通力強、能激勵人心\n• 個人品牌就是你的資產`,
+    title:"明星｜用影響力打造品牌",
+    oneLine:"代表人物：歐普拉・溫芙蕾｜「你站在那裡，本身就是價值」",
+    adv:`• 天生吸睛、很會說故事\n• 溝通能力強、能激勵人心\n• 個人品牌就是你的資產`,
     blind:`• 太在意形象，忽略內容\n• 過度強勢，容易引發爭議\n• 細節與系統會消耗你`,
-    wealth:`• 主打溝通、行銷、領導\n• 用真誠累積影響力\n• 細節交給團隊\n• 媒合者＋地主是神隊友\n✨ 你不是愛出風頭，是你真的能照亮別人。`
+    wealth:`• 主打溝通、行銷、領導\n• 用真誠累積影響力\n• 細節交給團隊\n• 媒合者＋地主是神隊友\n✨ 你不是愛出風頭，是你真的能照亮別人`,
+    partner:`最合拍：媒合者、地主\n原因：你負責被看見，他們負責讓案子成交＋系統運轉\n提醒：技師也很補你，但要先講清楚「標準」避免互相嫌`
   },
   "支持者": {
-    title:"🤝 支持者 Supporter｜把人聚在一起的人",
+    title:"支持者｜把人聚在一起的人",
     oneLine:"代表人物：傑克・威爾許｜「你不只帶人走，還讓人願意跟你走。」",
-    adv:`• 超強人際力、超會給信心\n• 能把價值變成行動\n• 團隊氣氛的靈魂人物`,
-    blind:`• 不耐數字與細節\n• 一個人時會迷失\n• 不適合長時間獨立作業`,
-    wealth:`• 領導、行銷、業務、顧問\n• 一定要在團隊中\n• 專注「人」而不是「表格」\n✨ 真正的領導，不是衝最快，而是讓大家都動起來。`
+    adv:`• 很會經營人際關係、超會給信心\n• 能把價值變成行動\n• 團隊氣氛的靈魂人物`,
+    blind:`• 不喜歡數字與細節\n• 一個人時會迷失\n• 不適合長時間獨立作業`,
+    wealth:`• 領導、行銷、業務、顧問\n• 一定要在團隊中\n• 專注在人而不是事情\n✨ 真正的領導，不是衝最快，而是讓大家都動起來`,
+    partner:`最合拍：商人、技師\n原因：你顧人與推進，他們顧流程與品質\n提醒：商人也很合，但要先對齊「利益分配」就超穩`
   },
   "媒合者": {
-    title:"🔗 媒合者 Deal Maker｜把對的人放在對的位置",
+    title:"媒合者｜把對的人放在對的位置",
     oneLine:"代表人物：唐納・川普｜「你不是創造產品，你創造機會。」",
-    adv:`• 對時機超敏感\n• 一對一關係經營高手\n• 談判、撮合、借勢一流`,
+    adv:`• 對時機超敏感\n• 一對一關係的經營高手\n• 談判、撮合的能力一流`,
     blind:`• 注意力分散\n• 想讓所有人都滿意\n• 架構不夠會失控`,
-    wealth:`• 專注前線談案、媒合\n• 建立人脈網絡\n• 避開系統與細節工作\n✨ 你存在的意義，就是讓事情「發生」。`
+    wealth:`• 專注前線談案、媒合\n• 建立人脈網絡\n• 避開系統與細節工作\n✨ 你存在的意義，就是讓事情發生`,
+    partner:`最合拍：積蓄者、創作者\n原因：你把局兜起來，創作者帶來新局，地主把後端接住\n提醒：積蓄者也很補你，但節奏會偏慢，需要耐心`
   },
-  "商人": {
-    title:"💹 商人 Trader｜低買高賣的時機獵人",
-    oneLine:"代表人物：喬治・索羅斯｜「你最值錢的，是你對市場的感覺。」",
-    adv:`• 超會抓 CP 值\n• 時機感、洞察力強\n• 談判與服務能力高`,
-    blind:`• 看不清大局\n• 信心起伏大\n• 創意與策略較弱`,
-    wealth:`• 投資、採購、執行、服務\n• 發揮低買高賣天賦\n• 不用逼自己當創意總監\n✨ 你不是慢，是你知道什麼時候該動。`
-  },
+"商人": {
+  title:"商人｜低買高賣的時機獵人",
+  oneLine:"代表人物：喬治・索羅斯｜「你最值錢的，是你對市場的感覺。」",
+  adv:`• 超會抓 CP 值\n• 時機感、洞察力強\n• 談判與服務能力高`,
+  blind:`• 看不清大局\n• 信心起伏大\n• 創意與策略較弱`,
+  wealth:`• 投資、採購、執行、服務\n• 發揮低買高賣天賦\n• 不用逼自己當創意總監\n✨ 你不是慢，是你知道什麼時候該動。`,
+  partner:`最合拍：地主、明星\n原因：你抓機會與價格，他們幫你談成＋把流程做穩\n提醒：創作者會帶你開新局，但要有人控風險（積蓄者/地主）`
+},
+
   "積蓄者": {
-    title:"🐢 積蓄者 Accumulator｜慢慢卻走最遠",
-    oneLine:"代表人物：華倫・巴菲特｜「你用耐心，換自由。」",
+    title:"積蓄者｜慢慢卻走最遠",
+    oneLine:"代表人物：華倫・巴菲特｜「你用耐心，換自由」",
     adv:`• 系統思維、風險控管\n• 深度研究、不衝動\n• 最穩定的財富型`,
     blind:`• 行動慢，被誤會拖延\n• 社交曝光較弱`,
-    wealth:`• 價值投資、長期持有\n• 設定「出手標準」\n• 找技師＋支持者合作\n✨ 慢，不是問題；亂動，才是。`
+    wealth:`• 價值投資、長期持有\n• 設定出手標準和時間\n• 找技師＋支持者合作\n✨ 慢，不是問題；亂動，才是`,
+    partner:`最合拍：技師、支持者\n原因：你會評估＋守住紀律，技師顧細節，支持者顧推進\n提醒：明星能加速曝光，但你要先確保「規則」不被打亂`
   },
   "地主": {
-    title:"🏗 地主 Landlord｜讓資產替你工作",
+    title:"地主｜讓資產替你工作",
     oneLine:"代表人物：拉克希米・米塔爾｜「你不在場，錢也會進來。」",
     adv:`• 控制全局、重視效率\n• 擅長後端、資產管理\n• 喜歡安靜賺錢`,
     blind:`• 不愛人際互動\n• 對曝光與行銷沒興趣`,
-    wealth:`• 系統、數據、資產優化\n• 當幕後大腦\n• 避開演講與銷售\n✨ 你不是冷，你只是把能量用在對的地方。`
+    wealth:`• 系統、數據、資產優化\n• 當幕後大腦\n• 避開演講與銷售\n✨ 你不是冷，你只是把能量用在對的地方`,
+    partner:`最合拍：創作者、媒合者\n原因：你顧後端與資源配置，他們顧前線開路\n提醒：你們都偏內向時，記得找一個人負責對外`
   },
   "技師": {
-    title:"⚙️ 技師 Mechanic｜把系統做到極致",
-    oneLine:"代表人物：馬克・祖克柏｜「你讓一切運轉得更好。」",
+    title:"技師｜把系統做到極致",
+    oneLine:"代表人物：馬克・祖克柏｜「你讓一切運轉得更好」",
     adv:`• 系統建構與優化\n• 完成度高、重品質\n• 一個人也能高效`,
     blind:`• 太鑽細節\n• 社交場合耗能`,
-    wealth:`• 接手現有系統來優化\n• 小專案完成感最重要\n• 不必從 0 開始\n✨ 沒有你，創意只會停在想像。`
+    wealth:`• 接手現有系統來優化\n• 小專案完成感最重要\n• 不必從 0 開始\n✨ 沒有你，創意只會停在想像`,
+    partner:`最合拍：創作者、支持者\n原因：創作者給方向，你負責落地；支持者負責協調與推進\n提醒：被催時先定規格，反而更快`
   }
 };
 
@@ -651,6 +730,7 @@ function startQuiz(){
   $("startPage").style.display="none";
   $("quizPage").style.display="flex";
   renderQuestion();
+  window.scrollTo(0,0);
 }
 
 function renderQuestion(){
@@ -726,7 +806,7 @@ function resizeCanvasToDisplaySize(canvas){
   return { size, dpr };
 }
 
-/* ========= 雷達圖 ========= */
+/* ========= 雷達圖（你原本版本） ========= */
 function drawRadar(type8, mainEnergyKey="D"){
   const c = $("radar");
   const ctx = c.getContext("2d");
@@ -777,27 +857,24 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.stroke();
   };
 
-  // 外框正方形
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#cfcfcf";
-  ctx.lineWidth = Math.max(1.0, S * 0.0030);   // ✅ 比你原本再細一點點（更精緻）
+  ctx.lineWidth = Math.max(1.0, S * 0.0030);
   drawSquare(half);
   ctx.restore();
 
-  // 八邊形兩層
   const octIn = r * 0.42;
   const octOut = r * 0.84;
 
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#d0d0d0";
-  ctx.lineWidth = Math.max(1.0, S * 0.0030);   // ✅ 線也細一點
+  ctx.lineWidth = Math.max(1.0, S * 0.0030);
   drawOct(octIn);
   drawOct(octOut);
   ctx.restore();
 
-  // 黃點定位
   const dotR   = Math.max(3, Math.round(S * 0.010));
   const dotGap = Math.max(14, Math.round(S * 0.038));
   const textGap = Math.max(16, Math.round(S * 0.048));
@@ -814,11 +891,10 @@ function drawRadar(type8, mainEnergyKey="D"){
     "地主":   { dotX: left  - dotGap, dotY: cY,              textX: left  - dotGap - textGap, textY: cY,                      align:"right" },
   };
 
-  // 射線
   ctx.save();
   ctx.setLineDash([S * 0.010, S * 0.010]);
   ctx.strokeStyle = "#d9d9d9";
-  ctx.lineWidth = Math.max(1.0, S * 0.0028);   // ✅ 射線也細一點
+  ctx.lineWidth = Math.max(1.0, S * 0.0028);
   ctx.lineCap = "butt";
 
   ctx.beginPath();
@@ -830,32 +906,6 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.stroke();
   ctx.restore();
 
-  // 中間四字
-  const midR = (octIn + octOut) / 2;
-  ctx.save();
-  const midFont = Math.max(12, Math.round(S * 0.038));
-  ctx.font = `${midFont}px 'Noto Sans TC'`;
-  ctx.fillStyle = "rgba(120,120,120,0.24)";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("發電機", cX, cY - midR);
-
-  ctx.save();
-  ctx.translate(cX + midR, cY);
-  ctx.rotate(Math.PI/2);
-  ctx.fillText("火焰", 0, 0);
-  ctx.restore();
-
-  ctx.fillText("節奏", cX, cY + midR);
-
-  ctx.save();
-  ctx.translate(cX - midR, cY);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText("鋼鐵", 0, 0);
-  ctx.restore();
-  ctx.restore();
-
-  // 黃點 + 外圈文字
   ctx.font = `${fontSize}px 'Noto Sans TC'`;
   ctx.textBaseline = "middle";
 
@@ -872,7 +922,6 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.fillText(name, pos.textX, pos.textY);
   }
 
-  // ✅ 雷達面積：邊界用第二圈八邊形
   const polyOut = octVertices(octOut);
   const cross = (ax, ay, bx, by) => ax*by - ay*bx;
 
@@ -904,7 +953,7 @@ function drawRadar(type8, mainEnergyKey="D"){
     const v = Math.max(0, Math.min(100, value || 0));
     let radius;
     if(v <= 30){
-      radius = octIn * (v / 30);
+      radius = (octIn) * (v / 30);
     }else if(v <= 70){
       radius = octIn + (octOut - octIn) * ((v - 30) / 40);
     }else{
@@ -933,15 +982,71 @@ function drawRadar(type8, mainEnergyKey="D"){
   for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
   ctx.closePath();
 
-  // ✅ 重點：面積顏色跟著最高能量
-  ctx.fillStyle = theme.fill;                 
+  ctx.fillStyle = theme.fill;
   ctx.strokeStyle = theme.stroke;
-  ctx.lineWidth = Math.max(1.4, S * 0.0050);  // ✅ 細一點、但仍然清晰
+  ctx.lineWidth = Math.max(1.4, S * 0.0050);
   ctx.fill();
   ctx.stroke();
 }
 
-/* ========= 下載整頁結果（IG 分享卡留白） ========= */
+/* ✅ 百分比小表格渲染 */
+function renderEnergyTable(p){
+  const table = $("energyTable");
+  table.innerHTML = `
+    <div class="eCell"><span class="eLabel">發電機：</span><span class="eVal">${p.D}%</span></div>
+    <div class="eCell"><span class="eLabel">火焰：</span><span class="eVal">${p.B}%</span></div>
+    <div class="eCell"><span class="eLabel">節奏：</span><span class="eVal">${p.T}%</span></div>
+    <div class="eCell"><span class="eLabel">鋼鐵：</span><span class="eVal">${p.S}%</span></div>
+  `;
+}
+
+/* ========= 結果 ========= */
+function showResult(){
+  if(answers.some(v=>!v)){
+    alert("還有題目沒作答喔～");
+    return;
+  }
+
+  const res = analyzeTalent(answers);
+  const p = res.percentages;
+  const type8 = res.type8;
+  const main = res.mainEnergy;
+  const role = res.final_trait;
+
+  $("quizPage").style.display="none";
+  $("resultPage").style.display="flex";
+
+  const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ? "節奏" : "鋼鐵";
+
+$("summaryLine").innerHTML =
+  `你的主能量是<span class="mainEnergy">【${mainName}】</span><br>`+
+  `你天賦順流角色是<span class="mainEnergy">【${role}】</span>`;
+
+
+
+  const block = TRAIT_BLOCKS[role] || { title:`${role}`, oneLine:"", adv:"", blind:"", wealth:"", partner:"" };
+  $("finalTraitTitle").textContent = block.title || role;
+  $("traitOneLine").textContent = block.oneLine || "";
+  $("advText").textContent = block.adv || "";
+  $("blindText").textContent = block.blind || "";
+  $("wealthText").textContent = block.wealth || "";
+  $("partnerText").textContent = block.partner || "";
+
+  renderEnergyTable(p);
+  drawRadar(type8, main);
+
+  const maxVal = Math.max(p.D, p.B, p.T, p.S);
+  const topKeys = ["D","B","T","S"].filter(k => p[k] === maxVal).slice(0,2);
+  const wrap = $("traitImgs");
+  wrap.className = topKeys.length === 1 ? "one" : "two";
+  wrap.innerHTML = topKeys.map(k =>
+    `<img crossorigin="anonymous" referrerpolicy="no-referrer" loading="eager" decoding="sync" src="${ENERGY_IMAGE[k] || ""}" alt="${k}">`
+  ).join("");
+
+  window.scrollTo(0,0);
+}
+
+/* ========= 下載（保留你原本） ========= */
 function waitForImages(root){
   const imgs = Array.from(root.querySelectorAll("img"));
   return Promise.all(imgs.map(img => {
@@ -964,7 +1069,6 @@ async function downloadResult(){
     shareCard.innerHTML = "";
 
     const clone = $("resultInner").cloneNode(true);
-
     const br = clone.querySelector("#btnRow");
     if(br) br.remove();
 
@@ -972,7 +1076,7 @@ async function downloadResult(){
     const canvasImg = document.createElement("img");
     canvasImg.src = liveCanvas.toDataURL("image/png");
     canvasImg.style.width = "100%";
-    canvasImg.style.maxWidth = "520px";
+    canvasImg.style.maxWidth = getComputedStyle(document.documentElement).getPropertyValue("--contentW").trim() || "980px";
     canvasImg.style.display = "block";
     canvasImg.style.margin = "0 auto";
 
@@ -1013,71 +1117,36 @@ async function downloadResult(){
 
   }catch(err){
     console.error(err);
-    alert("下載失敗：很可能是圖片來源不支援跨網域（CORS），所以被瀏覽器擋住了。你把圖片放到同網域（或換支援 CORS 的圖床）就會 100% 正常～我也可以幫你一起調整。");
+    alert("下載失敗：很可能是圖片來源不支援跨網域（CORS），所以被瀏覽器擋住了。");
   }finally{
     btn.disabled = false;
     btn.textContent = oldText;
   }
 }
 
-function showResult(){
-  if(answers.some(v=>!v)){
-    alert("還有題目沒作答喔～");
-    return;
+/* ✅ 事件綁定：click + touchstart（避免你說的「按了沒反應」） */
+window.addEventListener("DOMContentLoaded", ()=>{
+  const startBtn = $("startBtn");
+  if(startBtn){
+    startBtn.addEventListener("click", startQuiz);
+    startBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); startQuiz(); }, { passive:false });
   }
 
-  const res = analyzeTalent(answers);
-  const p = res.percentages;
-  const type8 = res.type8;
-  const main = res.mainEnergy;
-  const role = res.final_trait;
+  const prevBtn = $("prevBtn");
+  const nextBtn = $("nextBtn");
+  const againBtn = $("againBtn");
+  const downloadBtn = $("downloadBtn");
 
-  $("quizPage").style.display="none";
-  $("resultPage").style.display="flex";
-
-  $("energyLine").innerHTML =
-    `<div class="label">我的天賦能量</div>` +
-    `<div class="energyVals">` +
-      `<span>發電機 ：${p.D}%</span>` +
-      `<span>火焰 ：${p.B}%</span>` +
-      `<span>節奏 ：${p.T}%</span>` +
-      `<span>鋼鐵 ：${p.S}%</span>` +
-    `</div>`;
-
-  const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ? "節奏" : "鋼鐵";
-  $("summaryLine").textContent =
-    `你的主能量是【${mainName}】\n`+
-    `你天賦順流角色是【${role}】`;
-
-  const block = TRAIT_BLOCKS[role] || { title:`${role}`, oneLine:"", adv:"", blind:"", wealth:"" };
-  $("finalTraitTitle").textContent = block.title || role;
-  $("traitOneLine").textContent = block.oneLine || "";
-  $("advText").textContent = block.adv || "";
-  $("blindText").textContent = block.blind || "";
-  $("wealthText").textContent = block.wealth || "";
-
-  // ✅ 這行改了：把 main 能量帶進去決定顏色
-  drawRadar(type8, main);
-
-  const maxVal = Math.max(p.D, p.B, p.T, p.S);
-  const topKeys = ["D","B","T","S"].filter(k => p[k] === maxVal).slice(0,2);
-  const wrap = $("traitImgs");
-  wrap.className = topKeys.length === 1 ? "one" : "two";
-  wrap.innerHTML = topKeys.map(k =>
-    `<img crossorigin="anonymous" referrerpolicy="no-referrer" loading="eager" decoding="sync" src="${ENERGY_IMAGE[k] || ""}" alt="${k}">`
-  ).join("");
-}
-
-window.addEventListener("DOMContentLoaded", ()=>{
-  $("startBtn").addEventListener("click", startQuiz);
-  $("prevBtn").addEventListener("click", prevQ);
-  $("nextBtn").addEventListener("click", nextQ);
-  $("againBtn").addEventListener("click", restartQuiz);
-  $("downloadBtn").addEventListener("click", downloadResult);
+  if(prevBtn) prevBtn.addEventListener("click", prevQ);
+  if(nextBtn) nextBtn.addEventListener("click", nextQ);
+  if(againBtn) againBtn.addEventListener("click", restartQuiz);
+  if(downloadBtn) downloadBtn.addEventListener("click", downloadResult);
 });
 </script>
+
 </body>
 </html>
+
 
 
 
