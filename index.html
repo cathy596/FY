@@ -468,7 +468,7 @@
   <section id="startPage" class="section">
     <div>
       <h1>完成 25 題<br>測出你的天賦能量</h1>
-      <p>用 8 大職涯特質，看見最適合你的賺錢方式<br>5 分鐘，就能把你的天賦地圖打開。</p>
+      <p>用 8 大職涯特質，看見最適合你的賺錢方式<br>5 分鐘，就能把你的天賦地圖打開</p>
       <button id="startBtn" type="button">開始作答</button>
     </div>
   </section>
@@ -922,7 +922,7 @@ function resizeCanvasToDisplaySize(canvas){
   return { size, dpr };
 }
 
-/* ========= 雷達圖（手機放大修正版，不會縮在中間） ========= */
+/* ========= 雷達圖（手機放大修正版 + 虛線射線回來） ========= */
 function drawRadar(type8, mainEnergyKey="D"){
   const c = document.getElementById("radar");
   const ctx = c.getContext("2d");
@@ -1000,14 +1000,37 @@ function drawRadar(type8, mainEnergyKey="D"){
   const labels = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
   const pos = {
     技師:[-1,-1], 創作者:[0,-1], 明星:[1,-1],
-    支持者:[1,0], 媒合者:[1,1], 商人:[0,1],
+    支持者:[1,0],  媒合者:[1,1],  商人:[0,1],
     積蓄者:[-1,1], 地主:[-1,0]
   };
 
+  /* ✅ 先算出每個點位置（等一下畫虛線也用同一組座標） */
+  const dotPos = {};
   labels.forEach((k)=>{
     const [dx,dy]=pos[k];
-    const px = cX + dx*(half+dotGap);
-    const py = cY + dy*(half+dotGap);
+    const px = cX + dx*(half + dotGap);
+    const py = cY + dy*(half + dotGap);
+    dotPos[k] = { px, py, dx, dy };
+  });
+
+  /* ===== ✅ 虛線射線（補回來） ===== */
+  ctx.save();
+  ctx.setLineDash([S * 0.010, S * 0.010]);
+  ctx.strokeStyle = "#d9d9d9";
+  ctx.lineWidth = Math.max(1.0, S * 0.0028);
+  ctx.lineCap = "butt";
+
+  ctx.beginPath();
+  labels.forEach((k)=>{
+    ctx.moveTo(cX, cY);
+    ctx.lineTo(dotPos[k].px, dotPos[k].py);
+  });
+  ctx.stroke();
+  ctx.restore();
+
+  /* ===== 黃點 + 文字 ===== */
+  labels.forEach((k)=>{
+    const { px, py, dx, dy } = dotPos[k];
 
     ctx.fillStyle="#f2c94c";
     ctx.beginPath();
@@ -1046,6 +1069,7 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.fill();
   ctx.stroke();
 }
+
 // ✅ 讓手機旋轉/縮放時，雷達圖不會又縮回去
 let __lastRadar = null;
 
@@ -1213,7 +1237,6 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 </body>
 </html> 
-
 
 
 
