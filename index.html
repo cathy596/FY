@@ -15,7 +15,6 @@
       --camelShadow: rgba(176,122,58,.30);
       --contentW: 980px;
       --darkRed:#7A1F1F;
-
     }
 
     html{
@@ -124,14 +123,20 @@
       color:#111827;
       transition:.18s;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .option:hover{
-      border-color:#A56A2A;
-      color:#7A4A1E;
-      box-shadow:0 10px 24px rgba(165,106,42,.18);
-      transform:translateY(-1px);
-      background:rgba(165,106,42,.08);
+
+    /* ✅ 只在「真的有 hover 的裝置」才啟用 hover（避免換題時滑鼠停在同位置，下一題看起來像被選到） */
+    @media (hover:hover) and (pointer:fine){
+      .option:hover{
+        border-color:#A56A2A;
+        color:#7A4A1E;
+        box-shadow:0 10px 24px rgba(165,106,42,.18);
+        transform:translateY(-1px);
+        background:rgba(165,106,42,.08);
+      }
     }
+
     .option.selected{
       border-color:#A56A2A;
       color:#7A4A1E;
@@ -270,7 +275,7 @@
       #kGrid{ grid-template-columns: 1fr; }
     }
 
-    /* ✅ 2) 百分比小表格（置中、像你截圖那種） */
+    /* ✅ 2) 百分比小表格 */
     #energyCard{
       border-radius:18px;
       padding:12px;
@@ -278,60 +283,64 @@
       border:1px solid rgba(17,24,39,.10);
       box-shadow:0 10px 26px rgba(17,24,39,.06);
     }
- #energyTable{
-  width:100%;
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:0;
-  border-radius:12px;
-  overflow:hidden;
+    #energyTable{
+      width:100%;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:0;
+      border-radius:12px;
+      overflow:hidden;
+      background:rgba(17,24,39,.10);
+      border:1px solid rgba(17,24,39,.10);
+    }
 
-  /* ✅ 整條不要白：改成半透明灰、帶一點玻璃感 */
-  background:rgba(17,24,39,.10);
-  border:1px solid rgba(17,24,39,.10);
+    .eCell{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 8px;
+      background:rgba(255,255,255,.35);
+      border-right:1px solid rgba(0,0,0,.10);
+      font-weight:800;
+      backdrop-filter: blur(10px) saturate(1.2);
+      -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    }
+    .eCell:last-child{ border-right:none; }
+
+    .eLabel{
+      color:#111827;
+      font-weight:800;
+    }
+    .eVal{
+      color:var(--darkRed);
+      font-weight:900;
+    }
+
+    @media(max-width:640px){
+      #energyTable{ grid-template-columns: repeat(2, 1fr); }
+      .eCell:nth-child(2),
+      .eCell:nth-child(4){ border-right:none; }
+      .eCell:nth-child(1),
+      .eCell:nth-child(2){
+        border-bottom:1px solid rgba(0,0,0,.10);
+      }
+    }
+    @media (max-width: 560px){
+  .pillBtn{ white-space:nowrap; }
 }
+@media (max-width: 560px){
+  #vizRow{
+    margin-left:-10px;
+    margin-right:-10px; /* 讓雷達圖吃到更多可視寬 */
+  }
 
-.eCell{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:10px 8px;
-
-  /* ✅ 每格也不要白 */
-  background:rgba(255,255,255,.35);
-
-  border-right:1px solid rgba(0,0,0,.10);
-  font-weight:800;
-  backdrop-filter: blur(10px) saturate(1.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-}
-.eCell:last-child{ border-right:none; }
-
-.eLabel{
-  color:#111827;
-  font-weight:800;
-}
-
-/* ✅ % 數字暗紅 */
-.eVal{
-  color:var(--darkRed);
-  font-weight:900;
-}
-
-@media(max-width:640px){
-  #energyTable{ grid-template-columns: repeat(2, 1fr); }
-
-  /* 右邊界：第二格、第四格不需要 */
-  .eCell:nth-child(2),
-  .eCell:nth-child(4){ border-right:none; }
-
-  /* ✅ 中間橫線：前兩格是第一列，給底線 */
-  .eCell:nth-child(1),
-  .eCell:nth-child(2){
-    border-bottom:1px solid rgba(0,0,0,.10);
+  #radar{
+    width:calc(100% + 20px);
+    max-width:none;
   }
 }
+
 
     /* ✅ 3) 雷達圖 → 圖片 */
     #vizRow{
@@ -365,12 +374,26 @@
     @media(max-width:520px){
       #traitImgs.two{ grid-template-columns:1fr; }
     }
-@media (min-width: 900px){
-  #radar{
-    max-width: 800px;
+    @media (min-width: 900px){
+      #radar{ max-width: 800px; }
+    }
+/* ✅ 手機版：底部兩顆按鈕左右並排 */
+@media (max-width: 560px){
+  #btnRow{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:nowrap;         /* ✅ 不換行，固定左右 */
+  }
+
+  .pillBtn{
+    flex:1;                   /* ✅ 兩顆平均分 */
+    min-width:0;              /* ✅ 允許縮小避免擠爆 */
+    padding:12px 10px;        /* ✅ 手機稍微緊一點 */
+    font-size:14px;           /* ✅ 字也縮一點更穩 */
   }
 }
-
 
     #traitImgs img{
       width:100%;
@@ -432,11 +455,11 @@
       text-align:center;
       font-weight:600;
     }
-    .mainEnergy{
-  color:#7A1F1F;/* 紅色 */
-  font-weight:900;
-}
 
+    .mainEnergy{
+      color:#7A1F1F;
+      font-weight:900;
+    }
   </style>
 </head>
 
@@ -464,13 +487,9 @@
 
   <section id="resultPage" class="section">
     <div id="resultInner">
-
-      <!-- ✅ 1) 文字卡：我的天賦能量 + 文字解析 -->
       <div id="textBox" class="blockW">
         <div id="energyTitle">我的天賦能量</div>
-
         <div id="summaryLine"></div>
-
         <div id="finalTraitTitle"></div>
         <div id="traitOneLine"></div>
 
@@ -494,12 +513,10 @@
         </div>
       </div>
 
-      <!-- ✅ 2) 百分比小表格 -->
       <div id="energyCard" class="blockW">
         <div id="energyTable" aria-label="能量百分比表格"></div>
       </div>
 
-      <!-- ✅ 3) 雷達圖 → 圖片 -->
       <div id="vizRow" class="blockW">
         <canvas id="radar"></canvas>
         <div id="traitImgs"></div>
@@ -509,7 +526,6 @@
         <button id="againBtn" class="pillBtn" type="button">再測一次</button>
         <button id="downloadBtn" class="pillBtn" type="button">下載結果圖</button>
       </div>
-
     </div>
   </section>
 
@@ -608,25 +624,20 @@ function toPercentagesFromRaw(raw){
 function mapDBTS_to_8types(percentages){
   const { D, B, T, S } = percentages;
 
-  // ✅ 同一種算法：兩能量加權（全部角色都一樣的算式）
-  // w = 0.70 代表「這個角色比較偏向第一個能量」
   const mix = (a, b, w = 0.5) => Math.round(a * w + b * (1 - w));
 
   return {
-    // 四個「角落」角色：偏向某主能量（70/30），但仍然是雙能量算法
-    創作者: mix(D, B, 0.70), // 原本偏 D → 讓它仍偏 D，但跟 B 有連動
-    支持者: mix(B, T, 0.70), // 原本偏 B → 讓它仍偏 B，但跟 T 有連動
-    商人:   mix(T, B, 0.70), // 原本偏 T → 讓它仍偏 T，但跟 B 有連動
-    地主:   mix(S, T, 0.70), // 原本偏 S → 讓它仍偏 S，但跟 T 有連動
+    創作者: mix(D, B, 0.70),
+    支持者: mix(B, T, 0.70),
+    商人:   mix(T, B, 0.70),
+    地主:   mix(S, T, 0.70),
 
-    // 四個「邊」角色：就是兩能量 50/50（完全平均）
     技師:   mix(S, D, 0.50),
     明星:   mix(D, B, 0.50),
     媒合者: mix(B, T, 0.50),
     積蓄者: mix(T, S, 0.50),
   };
 }
-
 
 const ROLE_ORDER_8 = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
 function pickRoleBy8Types(type8){
@@ -660,7 +671,6 @@ const RADAR_THEME = {
   S: { stroke:"#6b7280", fill:"rgba(107,114,128,0.14)" },
 };
 
-/* ✅ 解析文案（你原本那段我完整補回來了） */
 const TRAIT_BLOCKS = {
   "創作者": {
     title:"創作者｜從 0 到 1 的發想靈感",
@@ -679,7 +689,6 @@ const TRAIT_BLOCKS = {
 原因：有人幫你落地＋幫你製作SOP
 提醒：別找另一個創作者一起飛，容易一起發散`
   },
-
   "明星": {
     title:"明星｜用影響力打造品牌",
     oneLine:"代表人物：歐普拉・溫芙蕾",
@@ -697,7 +706,6 @@ const TRAIT_BLOCKS = {
 原因：你負責被看見，他們負責讓案子成交＋系統運轉
 提醒：技師也很補你，但要先講清楚「標準」避免互相嫌`
   },
-
   "支持者": {
     title:"支持者｜把人聚在一起的人",
     oneLine:"代表人物：傑克・威爾許",
@@ -714,7 +722,6 @@ const TRAIT_BLOCKS = {
 原因：你顧人與推進，他們顧流程與品質
 提醒：商人也很合，但要先對齊「利益分配」就超穩`
   },
-
   "媒合者": {
     title:"媒合者｜把對的人放在對的位置",
     oneLine:"代表人物：唐納・川普",
@@ -731,7 +738,6 @@ const TRAIT_BLOCKS = {
 原因：你把局兜起來，創作者帶來新局，地主把後端接住
 提醒：積蓄者也很補你，但節奏會偏慢，需要耐心`
   },
-
   "商人": {
     title:"商人｜擅長抓準時機",
     oneLine:"代表人物：喬治・索羅斯",
@@ -748,7 +754,6 @@ const TRAIT_BLOCKS = {
 原因：你抓機會與價格，他們幫你談成＋把流程做穩
 提醒：創作者會帶你開新局，但要有人控風險`
   },
-
   "積蓄者": {
     title:"積蓄者｜累積是最重要的",
     oneLine:"代表人物：華倫・巴菲特",
@@ -764,7 +769,6 @@ const TRAIT_BLOCKS = {
 原因：你會評估＋守住紀律，技師顧細節，支持者顧推進
 提醒：明星能加速曝光，但你要先確保「規則」不被打亂`
   },
-
   "地主": {
     title:"地主｜讓資產替你工作",
     oneLine:"代表人物：拉克希米・米塔爾",
@@ -780,7 +784,6 @@ const TRAIT_BLOCKS = {
 原因：你顧後端與資源配置，他們顧前線開路
 提醒：你們都偏內向時，記得找一個人負責對外`
   },
-
   "技師": {
     title:"技師｜把系統做到極致",
     oneLine:"代表人物：馬克・祖克柏",
@@ -797,7 +800,6 @@ const TRAIT_BLOCKS = {
 提醒：被催時先定規格，反而更快`
   }
 };
-
 
 function analyzeTalent(answerArray){
   const raw = { D:0, B:0, T:0, S:0 };
@@ -818,11 +820,21 @@ let currentIndex = 0;
 const answers = new Array(QUESTIONS.length);
 const $ = (id)=>document.getElementById(id);
 
+/* ✅ 解除「滑鼠/觸控停留」造成的視覺殘影 */
+function clearPointerState(){
+  try{
+    if(document.activeElement && typeof document.activeElement.blur === "function"){
+      document.activeElement.blur();
+    }
+  }catch(e){}
+}
+
 function startQuiz(){
   $("startPage").style.display="none";
   $("quizPage").style.display="flex";
   renderQuestion();
   window.scrollTo(0,0);
+  clearPointerState();
 }
 
 function renderQuestion(){
@@ -839,17 +851,26 @@ function renderQuestion(){
 
   $("options").querySelectorAll(".option").forEach(el=>{
     el.addEventListener("click", ()=> pickOption(parseInt(el.dataset.idx,10)));
+    el.addEventListener("touchstart", (e)=>{
+      e.preventDefault();
+      pickOption(parseInt(el.dataset.idx,10));
+    }, { passive:false });
   });
 
   $("prevBtn").disabled = currentIndex===0;
   $("nextBtn").innerText = currentIndex === total-1 ? "看結果 ➜" : "下一題 ➜";
+
+  clearPointerState();
 }
 
 function pickOption(idx){
   answers[currentIndex] = idx+1;
   renderQuestion();
+
   if(currentIndex === QUESTIONS.length - 1) return;
+
   setTimeout(()=>{
+    clearPointerState();
     currentIndex++;
     renderQuestion();
     window.scrollTo(0,0);
@@ -858,6 +879,7 @@ function pickOption(idx){
 
 function prevQ(){
   if(currentIndex>0){
+    clearPointerState();
     currentIndex--;
     renderQuestion();
     window.scrollTo(0,0);
@@ -868,6 +890,7 @@ function nextQ(){
   const a = answers[currentIndex];
   if(!a){ alert("這一題還沒作答喔～"); return; }
   if(currentIndex < QUESTIONS.length-1){
+    clearPointerState();
     currentIndex++;
     renderQuestion();
     window.scrollTo(0,0);
@@ -883,6 +906,7 @@ function restartQuiz(){
   $("quizPage").style.display   = "none";
   $("startPage").style.display  = "flex";
   window.scrollTo(0,0);
+  clearPointerState();
 }
 
 function resizeCanvasToDisplaySize(canvas){
@@ -898,7 +922,6 @@ function resizeCanvasToDisplaySize(canvas){
   return { size, dpr };
 }
 
-/* ========= 雷達圖（你原本版本） ========= */
 /* ========= 雷達圖（修正版：不會被裁切） ========= */
 function drawRadar(type8, mainEnergyKey="D"){
   const c = $("radar");
@@ -914,7 +937,6 @@ function drawRadar(type8, mainEnergyKey="D"){
   const S = size;
   const cX = S/2, cY = S/2;
 
-  // ✅ OUT_PAD 拉大：外圍標籤一定放得下（這是你 Vercel 會被裁的主因）
   const OUT_PAD = Math.round(
     Math.max(140, Math.min(260, S * 0.34))
   );
@@ -954,7 +976,6 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.stroke();
   };
 
-  // ✅ 外框正方形
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#cfcfcf";
@@ -965,7 +986,6 @@ function drawRadar(type8, mainEnergyKey="D"){
   const octIn = r * 0.42;
   const octOut = r * 0.84;
 
-  // ✅ 八邊形兩層
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#d0d0d0";
@@ -974,15 +994,13 @@ function drawRadar(type8, mainEnergyKey="D"){
   drawOct(octOut);
   ctx.restore();
 
-  // ✅ 尺寸
   const dotR    = Math.max(3, Math.round(S * 0.010));
   const dotGap  = Math.max(14, Math.round(S * 0.038));
   const textGap = Math.max(16, Math.round(S * 0.048));
   const fontSize = Math.max(12, Math.round(S * 0.034));
 
-  // ✅ 防裁切：把點/字都鎖在 canvas 範圍內
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-  const PAD = Math.max(10, Math.round(S * 0.03));   // 畫布安全邊界
+  const PAD = Math.max(10, Math.round(S * 0.03));
   const clampX = (x)=>clamp(x, PAD, S - PAD);
   const clampY = (y)=>clamp(y, PAD, S - PAD);
 
@@ -997,7 +1015,6 @@ function drawRadar(type8, mainEnergyKey="D"){
     "地主":   { dotX: left  - dotGap, dotY: cY,              textX: left  - dotGap - textGap, textY: cY,                      align:"right" },
   };
 
-  // ✅ clamp 後的位置
   const P = {};
   for(const k in P0){
     P[k] = {
@@ -1009,7 +1026,6 @@ function drawRadar(type8, mainEnergyKey="D"){
     };
   }
 
-  // ✅ 虛線射線
   ctx.save();
   ctx.setLineDash([S * 0.010, S * 0.010]);
   ctx.strokeStyle = "#d9d9d9";
@@ -1025,7 +1041,6 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.stroke();
   ctx.restore();
 
-  // ✅ 標籤
   ctx.font = `${fontSize}px 'Noto Sans TC'`;
   ctx.textBaseline = "middle";
 
@@ -1042,7 +1057,6 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.fillText(name, pos.textX, pos.textY);
   }
 
-  // ✅ 畫數值多邊形（你的原邏輯保留）
   const polyOut = octVertices(octOut);
   const cross = (ax, ay, bx, by) => ax*by - ay*bx;
 
@@ -1110,7 +1124,6 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.stroke();
 }
 
-
 /* ✅ 百分比小表格渲染 */
 function renderEnergyTable(p){
   const table = $("energyTable");
@@ -1140,11 +1153,9 @@ function showResult(){
 
   const mainName = main === "D" ? "發電機" : main === "B" ? "火焰" : main === "T" ? "節奏" : "鋼鐵";
 
-$("summaryLine").innerHTML =
-  `你的主能量是<span class="mainEnergy">【${mainName}】</span><br>`+
-  `你天賦順流角色是<span class="mainEnergy">【${role}】</span>`;
-
-
+  $("summaryLine").innerHTML =
+    `你的主能量是<span class="mainEnergy">【${mainName}】</span><br>`+
+    `你天賦順流角色是<span class="mainEnergy">【${role}】</span>`;
 
   const block = TRAIT_BLOCKS[role] || { title:`${role}`, oneLine:"", adv:"", blind:"", wealth:"", partner:"" };
   $("finalTraitTitle").textContent = block.title || role;
@@ -1166,6 +1177,7 @@ $("summaryLine").innerHTML =
   ).join("");
 
   window.scrollTo(0,0);
+  clearPointerState();
 }
 
 /* ========= 下載（保留你原本） ========= */
@@ -1246,7 +1258,7 @@ async function downloadResult(){
   }
 }
 
-/* ✅ 事件綁定：click + touchstart（避免你說的「按了沒反應」） */
+/* ✅ 事件綁定 */
 window.addEventListener("DOMContentLoaded", ()=>{
   const startBtn = $("startBtn");
   if(startBtn){
@@ -1267,8 +1279,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 </script>
 
 </body>
-</html>
-
+</html> 
 
 
 
