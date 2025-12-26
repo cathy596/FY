@@ -891,6 +891,7 @@ function resizeCanvasToDisplaySize(canvas){
 }
 
 /* ========= 雷達圖（你原本版本） ========= */
+/* ========= 雷達圖（修正版：不會被裁切） ========= */
 function drawRadar(type8, mainEnergyKey="D"){
   const c = $("radar");
   const ctx = c.getContext("2d");
@@ -905,11 +906,12 @@ function drawRadar(type8, mainEnergyKey="D"){
   const S = size;
   const cX = S/2, cY = S/2;
 
- const OUT_PAD = Math.round(
-  Math.max(72, Math.min(160, S * 0.22))
-);
+  // ✅ OUT_PAD 拉大：外圍標籤一定放得下（這是你 Vercel 會被裁的主因）
+  const OUT_PAD = Math.round(
+    Math.max(140, Math.min(260, S * 0.34))
+  );
 
-  const half = (S/2) - OUT_PAD;
+  const half = Math.max(10, (S/2) - OUT_PAD);
 
   const left = cX - half, right = cX + half;
   const top  = cY - half, bottom = cY + half;
@@ -944,6 +946,7 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.stroke();
   };
 
+  // ✅ 外框正方形
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#cfcfcf";
@@ -954,6 +957,7 @@ function drawRadar(type8, mainEnergyKey="D"){
   const octIn = r * 0.42;
   const octOut = r * 0.84;
 
+  // ✅ 八邊形兩層
   ctx.save();
   ctx.setLineDash([]);
   ctx.strokeStyle = "#d0d0d0";
@@ -962,12 +966,19 @@ function drawRadar(type8, mainEnergyKey="D"){
   drawOct(octOut);
   ctx.restore();
 
-  const dotR   = Math.max(3, Math.round(S * 0.010));
-  const dotGap = Math.max(14, Math.round(S * 0.038));
+  // ✅ 尺寸
+  const dotR    = Math.max(3, Math.round(S * 0.010));
+  const dotGap  = Math.max(14, Math.round(S * 0.038));
   const textGap = Math.max(16, Math.round(S * 0.048));
   const fontSize = Math.max(12, Math.round(S * 0.034));
 
-  const P = {
+  // ✅ 防裁切：把點/字都鎖在 canvas 範圍內
+  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+  const PAD = Math.max(10, Math.round(S * 0.03));   // 畫布安全邊界
+  const clampX = (x)=>clamp(x, PAD, S - PAD);
+  const clampY = (y)=>clamp(y, PAD, S - PAD);
+
+  const P0 = {
     "技師":   { dotX: left  - dotGap, dotY: top    - dotGap,  textX: left  - dotGap - textGap, textY: top    - dotGap - textGap, align:"right" },
     "創作者": { dotX: cX,            dotY: top    - dotGap,  textX: cX,                     textY: top    - dotGap - textGap, align:"center" },
     "明星":   { dotX: right + dotGap, dotY: top    - dotGap,  textX: right + dotGap + textGap, textY: top  - dotGap - textGap, align:"left" },
@@ -978,6 +989,19 @@ function drawRadar(type8, mainEnergyKey="D"){
     "地主":   { dotX: left  - dotGap, dotY: cY,              textX: left  - dotGap - textGap, textY: cY,                      align:"right" },
   };
 
+  // ✅ clamp 後的位置
+  const P = {};
+  for(const k in P0){
+    P[k] = {
+      ...P0[k],
+      dotX: clampX(P0[k].dotX),
+      dotY: clampY(P0[k].dotY),
+      textX: clampX(P0[k].textX),
+      textY: clampY(P0[k].textY),
+    };
+  }
+
+  // ✅ 虛線射線
   ctx.save();
   ctx.setLineDash([S * 0.010, S * 0.010]);
   ctx.strokeStyle = "#d9d9d9";
@@ -993,6 +1017,7 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.stroke();
   ctx.restore();
 
+  // ✅ 標籤
   ctx.font = `${fontSize}px 'Noto Sans TC'`;
   ctx.textBaseline = "middle";
 
@@ -1009,6 +1034,7 @@ function drawRadar(type8, mainEnergyKey="D"){
     ctx.fillText(name, pos.textX, pos.textY);
   }
 
+  // ✅ 畫數值多邊形（你的原邏輯保留）
   const polyOut = octVertices(octOut);
   const cross = (ax, ay, bx, by) => ax*by - ay*bx;
 
@@ -1075,6 +1101,7 @@ function drawRadar(type8, mainEnergyKey="D"){
   ctx.fill();
   ctx.stroke();
 }
+
 
 /* ✅ 百分比小表格渲染 */
 function renderEnergyTable(p){
@@ -1233,6 +1260,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 </body>
 </html>
+
 
 
 
