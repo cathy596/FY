@@ -922,207 +922,139 @@ function resizeCanvasToDisplaySize(canvas){
   return { size, dpr };
 }
 
-/* ========= 雷達圖（修正版：不會被裁切） ========= */
+/* ========= 雷達圖（手機放大修正版，不會縮在中間） ========= */
 function drawRadar(type8, mainEnergyKey="D"){
-  const c = $("radar");
+  const c = document.getElementById("radar");
   const ctx = c.getContext("2d");
-  const { size, dpr } = resizeCanvasToDisplaySize(c);
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  const S = Math.floor(Math.min(rect.width, rect.height)) || 420;
+
+  c.width  = Math.floor(S * dpr);
+  c.height = Math.floor(S * dpr);
 
   ctx.setTransform(1,0,0,1,0,0);
-  ctx.clearRect(0,0,c.width,c.height);
   ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,S,S);
 
   const theme = RADAR_THEME[mainEnergyKey] || RADAR_THEME.D;
 
-  const S = size;
   const cX = S/2, cY = S/2;
+  const isSmall = S < 520;
 
+  /* ✅ 關鍵：手機 OUT_PAD 大幅縮小，避免雷達圖被吃掉 */
   const OUT_PAD = Math.round(
-    Math.max(140, Math.min(260, S * 0.34))
+    isSmall
+      ? Math.max(64,  Math.min(140, S * 0.16))   // 手機
+      : Math.max(120, Math.min(240, S * 0.28))   // 桌機
   );
 
   const half = Math.max(10, (S/2) - OUT_PAD);
-
-  const left = cX - half, right = cX + half;
-  const top  = cY - half, bottom = cY + half;
-
   const r = half / 0.9238795325;
 
-  const drawSquare = (h)=>{
-    ctx.beginPath();
-    ctx.moveTo(cX - h, cY - h);
-    ctx.lineTo(cX + h, cY - h);
-    ctx.lineTo(cX + h, cY + h);
-    ctx.lineTo(cX - h, cY + h);
-    ctx.closePath();
-    ctx.stroke();
-  };
+  /* ===== 外框正方形 ===== */
+  ctx.save();
+  ctx.strokeStyle = "#cfcfcf";
+  ctx.lineWidth = Math.max(1, S * 0.003);
+  ctx.strokeRect(cX - half, cY - half, half * 2, half * 2);
+  ctx.restore();
 
-  const octVertices = (rr)=>{
-    const pts = [];
+  /* ===== 八邊形 ===== */
+  const oct = (rr)=>{
+    const pts=[];
     for(let i=0;i<8;i++){
       const ang = (-90 + i*45) * Math.PI/180;
-      pts.push({ x: cX + rr*Math.cos(ang), y: cY + rr*Math.sin(ang) });
+      pts.push({ x:cX+rr*Math.cos(ang), y:cY+rr*Math.sin(ang) });
     }
     return pts;
   };
 
-  const drawOct = (rr)=>{
-    const vs = octVertices(rr);
+  const drawPoly = (pts)=>{
     ctx.beginPath();
-    ctx.moveTo(vs[0].x, vs[0].y);
-    for(let i=1;i<vs.length;i++) ctx.lineTo(vs[i].x, vs[i].y);
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
     ctx.closePath();
     ctx.stroke();
   };
 
-  ctx.save();
-  ctx.setLineDash([]);
-  ctx.strokeStyle = "#cfcfcf";
-  ctx.lineWidth = Math.max(1.0, S * 0.0030);
-  drawSquare(half);
-  ctx.restore();
-
-  const octIn = r * 0.42;
+  const octIn  = r * 0.42;
   const octOut = r * 0.84;
 
   ctx.save();
-  ctx.setLineDash([]);
-  ctx.strokeStyle = "#d0d0d0";
-  ctx.lineWidth = Math.max(1.0, S * 0.0030);
-  drawOct(octIn);
-  drawOct(octOut);
+  ctx.strokeStyle="#d0d0d0";
+  ctx.lineWidth=Math.max(1,S*0.003);
+  drawPoly(oct(octIn));
+  drawPoly(oct(octOut));
   ctx.restore();
 
-  const dotR    = Math.max(3, Math.round(S * 0.010));
-  const dotGap  = Math.max(14, Math.round(S * 0.038));
-  const textGap = Math.max(16, Math.round(S * 0.048));
-  const fontSize = Math.max(12, Math.round(S * 0.034));
+  /* ===== 標籤配置（手機縮距離） ===== */
+  const dotR     = Math.max(isSmall ? 2.6 : 3,  S * 0.01);
+  const dotGap   = Math.max(isSmall ? 10  : 14, S * (isSmall ? 0.026 : 0.038));
+  const textGap  = Math.max(isSmall ? 12  : 16, S * (isSmall ? 0.034 : 0.048));
+  const fontSize = Math.max(isSmall ? 11  : 12, S * (isSmall ? 0.030 : 0.034));
 
-  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-  const PAD = Math.max(10, Math.round(S * 0.03));
-  const clampX = (x)=>clamp(x, PAD, S - PAD);
-  const clampY = (y)=>clamp(y, PAD, S - PAD);
-
-  const P0 = {
-    "技師":   { dotX: left  - dotGap, dotY: top    - dotGap,  textX: left  - dotGap - textGap, textY: top    - dotGap - textGap, align:"right" },
-    "創作者": { dotX: cX,            dotY: top    - dotGap,  textX: cX,                     textY: top    - dotGap - textGap, align:"center" },
-    "明星":   { dotX: right + dotGap, dotY: top    - dotGap,  textX: right + dotGap + textGap, textY: top  - dotGap - textGap, align:"left" },
-    "支持者": { dotX: right + dotGap, dotY: cY,              textX: right + dotGap + textGap, textY: cY,                      align:"left" },
-    "媒合者": { dotX: right + dotGap, dotY: bottom + dotGap, textX: right + dotGap + textGap, textY: bottom + dotGap + textGap, align:"left" },
-    "商人":   { dotX: cX,            dotY: bottom + dotGap,  textX: cX,                     textY: bottom + dotGap + textGap, align:"center" },
-    "積蓄者": { dotX: left  - dotGap, dotY: bottom + dotGap, textX: left  - dotGap - textGap, textY: bottom + dotGap + textGap, align:"right" },
-    "地主":   { dotX: left  - dotGap, dotY: cY,              textX: left  - dotGap - textGap, textY: cY,                      align:"right" },
-  };
-
-  const P = {};
-  for(const k in P0){
-    P[k] = {
-      ...P0[k],
-      dotX: clampX(P0[k].dotX),
-      dotY: clampY(P0[k].dotY),
-      textX: clampX(P0[k].textX),
-      textY: clampY(P0[k].textY),
-    };
-  }
-
-  ctx.save();
-  ctx.setLineDash([S * 0.010, S * 0.010]);
-  ctx.strokeStyle = "#d9d9d9";
-  ctx.lineWidth = Math.max(1.0, S * 0.0028);
-  ctx.lineCap = "butt";
-
-  ctx.beginPath();
-  const rayOrder = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
-  for(const name of rayOrder){
-    ctx.moveTo(cX, cY);
-    ctx.lineTo(P[name].dotX, P[name].dotY);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  ctx.font = `${fontSize}px 'Noto Sans TC'`;
-  ctx.textBaseline = "middle";
+  ctx.font = `${fontSize}px "Noto Sans TC"`;
+  ctx.textBaseline="middle";
 
   const labels = ["技師","創作者","明星","支持者","媒合者","商人","積蓄者","地主"];
-  for (const name of labels) {
-    const pos = P[name];
+  const pos = {
+    技師:[-1,-1], 創作者:[0,-1], 明星:[1,-1],
+    支持者:[1,0], 媒合者:[1,1], 商人:[0,1],
+    積蓄者:[-1,1], 地主:[-1,0]
+  };
+
+  labels.forEach((k)=>{
+    const [dx,dy]=pos[k];
+    const px = cX + dx*(half+dotGap);
+    const py = cY + dy*(half+dotGap);
+
+    ctx.fillStyle="#f2c94c";
     ctx.beginPath();
-    ctx.fillStyle = "#f2c94c";
-    ctx.arc(pos.dotX, pos.dotY, dotR, 0, Math.PI * 2);
+    ctx.arc(px,py,dotR,0,Math.PI*2);
     ctx.fill();
 
-    ctx.fillStyle = "#000";
-    ctx.textAlign = pos.align;
-    ctx.fillText(name, pos.textX, pos.textY);
-  }
+    ctx.fillStyle="#000";
+    ctx.textAlign = dx===0 ? "center" : dx>0 ? "left" : "right";
+    ctx.fillText(
+      k,
+      px + dx*textGap,
+      py + dy*textGap
+    );
+  });
 
-  const polyOut = octVertices(octOut);
-  const cross = (ax, ay, bx, by) => ax*by - ay*bx;
-
-  function rayIntersectPolygonMaxT(poly, ux, uy){
-    let bestT = Infinity;
-    for(let i=0;i<poly.length;i++){
-      const p1 = poly[i];
-      const p2 = poly[(i+1)%poly.length];
-      const vx = p2.x - p1.x;
-      const vy = p2.y - p1.y;
-
-      const wx = p1.x - cX;
-      const wy = p1.y - cY;
-
-      const denom = cross(ux, uy, vx, vy);
-      if(Math.abs(denom) < 1e-9) continue;
-
-      const t = cross(wx, wy, vx, vy) / denom;
-      const s = cross(wx, wy, ux, uy) / denom;
-
-      if(t >= 0 && s >= 0 && s <= 1){
-        if(t < bestT) bestT = t;
-      }
-    }
-    return bestT;
-  }
-
-  function mapValueToK(value){
-    const v = Math.max(0, Math.min(100, value || 0));
-    let radius;
-    if(v <= 30){
-      radius = (octIn) * (v / 30);
-    }else if(v <= 70){
-      radius = octIn + (octOut - octIn) * ((v - 30) / 40);
-    }else{
-      radius = octOut;
-    }
-    return radius / octOut;
-  }
-
+  /* ===== 雷達資料 ===== */
+  const values = labels.map(k=>type8?.[k]||0);
   const angles = [-135,-90,-45,0,45,90,135,180].map(a=>a*Math.PI/180);
-  const values = labels.map(k => (type8?.[k] ?? 0));
-  const pts = [];
 
-  for(let i=0;i<8;i++){
-    const a = angles[i];
-    const ux = Math.cos(a), uy = Math.sin(a);
-    const tOuter = rayIntersectPolygonMaxT(polyOut, ux, uy);
-
-    const k = mapValueToK(values[i]);
-    const t = tOuter * k;
-
-    pts.push({ x: cX + ux * t, y: cY + uy * t });
-  }
+  const pts = values.map((v,i)=>{
+    const t = Math.max(0,Math.min(1,(v||0)/100));
+    return {
+      x:cX + Math.cos(angles[i]) * octOut * t,
+      y:cY + Math.sin(angles[i]) * octOut * t
+    };
+  });
 
   ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
   ctx.closePath();
 
   ctx.fillStyle = theme.fill;
   ctx.strokeStyle = theme.stroke;
-  ctx.lineWidth = Math.max(1.4, S * 0.0050);
+  ctx.lineWidth = Math.max(1.4,S*0.005);
   ctx.fill();
   ctx.stroke();
 }
+// ✅ 讓手機旋轉/縮放時，雷達圖不會又縮回去
+let __lastRadar = null;
+
+window.addEventListener("resize", ()=>{
+  if(__lastRadar && document.getElementById("resultPage").style.display === "flex"){
+    drawRadar(__lastRadar.type8, __lastRadar.main);
+  }
+});
+
 
 /* ✅ 百分比小表格渲染 */
 function renderEnergyTable(p){
@@ -1166,6 +1098,7 @@ function showResult(){
   $("partnerText").textContent = block.partner || "";
 
   renderEnergyTable(p);
+  __lastRadar = { type8, main };
   drawRadar(type8, main);
 
   const maxVal = Math.max(p.D, p.B, p.T, p.S);
